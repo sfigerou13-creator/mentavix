@@ -297,6 +297,7 @@ h1,h2,.disp{font-family:'Fraunces',serif}
     </div>
     <div class="center mb"><span class="lvlchip" id="gLvl">🌱 Niveau 1</span>
       <div class="xpwrap"><div class="xpbar"><i id="gXp"></i></div><div class="xplbl" id="gXpLbl"></div></div>
+      <div class="xplbl" id="gJoker" style="text-align:center"></div>
     </div>
     <div class="card" style="padding:18px">
       <p class="sub" style="font-weight:700;margin-bottom:4px">Vos 7 piliers</p>
@@ -499,7 +500,7 @@ function freshState(){
   Object.keys(PILLARS).forEach(k=>p[k]={score:60,last:null,ok:0,tries:0});
   return { age:65, brainAge:null, startBrainAge:null, neurones:0, badges:[],
     streak:0, bestStreak:0, lastDay:null, sessions:0, totalExos:0,
-    history:[], pillars:p, chestDay:null, recent:[],
+    history:[], pillars:p, chestDay:null, recent:[], lastJoker:null,
     derivedAsked:[], derivations:[],
     tinnitus:{has:false,origin:null,eva:[]} };
 }
@@ -718,6 +719,9 @@ function updateStreak(){
   const res={counted:false,bonus:0,newBadges:[]};
   if(D.lastDay===today) return res;          /* déjà compté aujourd'hui */
   if(D.lastDay && daysBetween(D.lastDay,today)===1) D.streak++;
+  else if(D.lastDay && daysBetween(D.lastDay,today)===2 && (!D.lastJoker || daysBetween(D.lastJoker,today)>=7)){
+    D.lastJoker=today; D.streak++; res.joker=true;   /* joker : le jour manqué ne casse pas la série */
+  }
   else D.streak=1;
   D.lastDay=today;
   D.bestStreak=Math.max(D.bestStreak,D.streak);
@@ -751,6 +755,10 @@ function showGarden(){
   $('gLvl').textContent=li.cur.em+' Niveau '+li.n+' · '+li.cur.t;
   $('gXp').style.width=li.pct+'%';
   $('gXpLbl').textContent= li.next ? (D.neurones+' / '+li.next.xp+' ⚡ vers « '+li.next.t+' »') : 'Niveau maximum atteint ! 👑';
+  const jokerOk=!D.lastJoker || daysBetween(D.lastJoker,todayStr())>=7;
+  $('gJoker').textContent= jokerOk
+    ? 'Joker disponible : un jour manqué ne cassera pas votre série.'
+    : 'Joker utilisé — de retour dans '+(7-daysBetween(D.lastJoker,todayStr()))+' j.';
   /* plantes */
   $('gPlants').innerHTML=Object.keys(PILLARS).map(k=>{
     const P=PILLARS[k], pi=D.pillars[k], v=pi.score, wd=wiltDays(k);
@@ -1345,6 +1353,17 @@ function buildPlan(){
     if(plan[plan.length-1]!==k) plan.push(k);
   }
   if(!plan.includes('audition')) plan[1+Math.floor(Math.random()*(sessionLen-1))]='audition';
+  /* Flow : garantir 2 moments de maîtrise sur les piliers forts */
+  const best=Object.keys(PILLARS).sort((a,b)=>D.pillars[b].score-D.pillars[a].score).slice(0,2);
+  const strong=Object.keys(GEN).filter(k=>best.includes(GEN[k].pillar));
+  if(strong.length && sessionLen>=6){
+    [2,5].forEach(i=>{
+      if(plan[i]==='audition') return;
+      let k=rnd(strong), guard=0;
+      while((plan[i-1]===k || plan[i+1]===k) && guard++<10) k=rnd(strong);
+      if(plan[i-1]!==k && plan[i+1]!==k) plan[i]=k;
+    });
+  }
   return plan;
 }
 function buildPillarPlan(pk){
@@ -1439,7 +1458,9 @@ function endSession(){
   if(Object.keys(PILLARS).every(k=>D.pillars[k].last)) grantBadge('jardinier','endBadges');
   /* série */
   $('endStreakTxt').textContent='🔥 Série : '+D.streak+' jour'+(D.streak>1?'s':'');
-  $('endStreakSub').innerHTML = streakRes.bonus
+  $('endStreakSub').innerHTML = streakRes.joker
+    ? 'Un jour manqué — votre <b>joker</b> a protégé votre série. Il se recharge dans 7 jours.'
+    : streakRes.bonus
     ? 'Vous êtes revenu. <b>+'+streakRes.bonus+' neurones bonus</b>.'
     : D.streak>=7 ? 'Une semaine complète. Une régularité remarquable.'
     : 'Revenez demain pour prolonger la série' + (D.streak===1?' — un <b>bonus de +50 neurones</b> vous attend.':'.');
