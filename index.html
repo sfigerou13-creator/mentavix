@@ -8,13 +8,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --fond:#F6F3ED; --carte:#FFFFFF;
-  --soleil:#CBBFA5; --soleil2:#B3A78C;
-  --corail:#3E6B54; --corail2:#2E5240;
+  --fond:#F8F3EA; --carte:#FFFDF9;
+  --soleil:#D9BD8F; --soleil2:#C3A574;
+  --corail:#B96A4B; --corail2:#9E5439;
   --feuille:#4A7C59; --feuille2:#3A6247;
   --violet:#5B5F97; --brique:#A85B52;
-  --encre:#2B2925; --encre2:#6E685D;
-  --lisere:#E7E1D6; --or:#B98E4F;
+  --encre:#332C23; --encre2:#7A7060;
+  --lisere:#EBE2D2; --or:#C29455;
   --r:18px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -23,7 +23,7 @@ body{
   font-family:'Atkinson Hyperlegible',sans-serif;
   background:var(--fond); color:var(--encre);
   display:flex;justify-content:center;
-  background-image:linear-gradient(180deg,#F8F5F0 0%,#F4F0E8 100%);
+  background-image:linear-gradient(180deg,#FAF5EC 0%,#F5EDDE 100%);
 }
 #app{width:100%;max-width:460px;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .screen{display:none;flex:1;flex-direction:column;padding:22px;animation:fade .4s ease;overflow-y:auto;min-height:0}
@@ -88,21 +88,21 @@ h1,h2,.disp{font-family:'Fraunces',serif}
 /* ── niveau / XP ── */
 .lvlchip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2.5px solid var(--soleil);border-radius:999px;padding:6px 14px;font-family:'Fraunces',serif;font-weight:800;font-size:15px;box-shadow:0 2px 8px rgba(43,41,37,.07)}
 .xpwrap{margin:8px 0 2px}
-.xpbar{height:14px;background:#EDE9DF;border:2px solid #E0DACC;border-radius:99px;overflow:hidden}
+.xpbar{height:14px;background:#EFE7D8;border:2px solid #E2D8C4;border-radius:99px;overflow:hidden}
 .xpbar i{display:block;height:100%;width:0%;border-radius:99px;background:var(--or);transition:width .8s ease}
 .xplbl{font-size:12.5px;color:var(--encre2);font-weight:700;margin-top:4px;text-align:right}
 
 /* ── cartes ── */
 .card{background:var(--carte);border:2.5px solid var(--lisere);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(43,41,37,.07)}
-.sci{display:inline-block;font-size:13px;color:var(--encre2);background:#F3F0E9;border:2px solid var(--lisere);border-radius:999px;padding:5px 13px;margin-bottom:12px;font-weight:700}
+.sci{display:inline-block;font-size:13px;color:var(--encre2);background:#F6EFE2;border:2px solid var(--lisere);border-radius:999px;padding:5px 13px;margin-bottom:12px;font-weight:700}
 .stim{font-family:'Fraunces',serif;font-size:54px;font-weight:800;text-align:center;margin:24px 0;min-height:70px}
 .stim.small{font-size:29px;line-height:1.45}
-.progress-track{height:18px;background:#EDE9DF;border-radius:99px;margin:6px 0 16px;overflow:hidden;border:2px solid #E0DACC}
+.progress-track{height:18px;background:#EFE7D8;border-radius:99px;margin:6px 0 16px;overflow:hidden;border:2px solid #E2D8C4}
 .progress-track i{display:block;height:100%;border-radius:99px;background:var(--corail);transition:width .5s ease;width:0%}
 .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}
 .dot{aspect-ratio:1;border-radius:50%}
 .dot.b{background:#2E5EC4}.dot.r{background:#D9534F}
-.timerline{height:10px;background:#EDE9DF;border-radius:99px;margin:8px 0 18px;overflow:hidden;border:2px solid #E0DACC}
+.timerline{height:10px;background:#EFE7D8;border-radius:99px;margin:8px 0 18px;overflow:hidden;border:2px solid #E2D8C4}
 .timerline i{display:block;height:100%;background:var(--feuille);width:100%}
 .stroopword{font-family:'Fraunces',serif;font-size:60px;font-weight:800;text-align:center;margin:26px 0}
 .colorbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -123,7 +123,7 @@ h1,h2,.disp{font-family:'Fraunces',serif}
 /* ── zone réflexe (PVT / Go-NoGo) ── */
 .reflexzone{min-height:190px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;
   font-family:'Fraunces',serif;font-size:30px;font-weight:800;cursor:pointer;user-select:none;
-  border:3px dashed #E0DACC;color:var(--encre2);margin:14px 0;transition:background .15s}
+  border:3px dashed #E2D8C4;color:var(--encre2);margin:14px 0;transition:background .15s}
 .reflexzone.wait{background:#F8ECEA;border-color:var(--brique);color:var(--brique);border-style:solid}
 .reflexzone.go{background:#EEF4EF;border-color:var(--feuille);color:var(--feuille2);border-style:solid;font-size:38px}
 
@@ -139,11 +139,11 @@ h1,h2,.disp{font-family:'Fraunces',serif}
 .domrow{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .domrow .em{font-size:26px;width:34px}
 .domrow .name{width:118px;font-size:15px;font-weight:700}
-.domrow .bar{flex:1;height:16px;background:#EDE9DF;border-radius:99px;overflow:hidden;border:2px solid #E0DACC}
+.domrow .bar{flex:1;height:16px;background:#EFE7D8;border-radius:99px;overflow:hidden;border:2px solid #E2D8C4}
 .domrow .bar i{display:block;height:100%;border-radius:99px;transition:width .7s ease;width:0%}
 .domrow .pct{width:46px;text-align:right;font-weight:700;font-size:15px}
 .domrow.faded{opacity:.55}
-.badge{display:flex;gap:14px;align-items:center;background:#FAF8F3;border:2.5px solid var(--soleil);border-radius:var(--r);padding:15px;margin-bottom:12px;box-shadow:0 2px 8px rgba(43,41,37,.07);animation:pop .5s ease}
+.badge{display:flex;gap:14px;align-items:center;background:#FBF6EC;border:2.5px solid var(--soleil);border-radius:var(--r);padding:15px;margin-bottom:12px;box-shadow:0 2px 8px rgba(43,41,37,.07);animation:pop .5s ease}
 @keyframes pop{0%{transform:scale(.8);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
 .badge .ic{font-size:24px}
 .badge b{display:block;font-size:17px;font-family:'Fraunces',serif}.badge small{color:var(--encre2)}
@@ -156,21 +156,21 @@ h1,h2,.disp{font-family:'Fraunces',serif}
 
 /* ── jardin cognitif ── */
 .plantrow{display:flex;align-items:center;gap:12px;margin-bottom:15px;cursor:pointer;border-radius:14px;padding:4px;transition:background .15s}
-.plantrow:active{background:#F3F0E9}
+.plantrow:active{background:#F6EFE2}
 .pdot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin:0 16px}
 .plantrow .chev{font-family:'Fraunces',serif;font-size:22px;color:var(--corail2);font-weight:800}
 .plantrow .plant{font-size:34px;width:44px;text-align:center;transition:filter .4s}
 .plantrow.wilt .plant{filter:grayscale(.75) opacity(.75)}
 .plantrow .pname{width:118px;font-size:15px;font-weight:700;line-height:1.2}
 .plantrow .pname small{display:block;font-weight:400;color:var(--encre2);font-size:12px}
-.plantrow .bar{flex:1;height:16px;background:#EDE9DF;border-radius:99px;overflow:hidden;border:2px solid #E0DACC}
+.plantrow .bar{flex:1;height:16px;background:#EFE7D8;border-radius:99px;overflow:hidden;border:2px solid #E2D8C4}
 .plantrow .bar i{display:block;height:100%;border-radius:99px;transition:width .7s ease}
 .curve{width:100%;height:120px;margin:4px 0 2px}
 .legend{font-size:12.5px;color:var(--encre2);font-weight:700;text-align:center;margin-bottom:6px}
 .disclaimer{font-size:12px;color:var(--encre2);text-align:center;margin-top:14px;line-height:1.5}
 .resetlink{background:none;border:none;color:var(--encre2);font-size:12px;text-decoration:underline;cursor:pointer;margin-top:10px;font-family:inherit}
 .evagrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.evagrid button{min-height:50px;border-radius:14px;border:2.5px solid #E0DACC;border-bottom:5px solid #E0DACC;background:#fff;font-family:'Fraunces',serif;font-size:19px;font-weight:800;color:var(--encre);cursor:pointer}
+.evagrid button{min-height:50px;border-radius:14px;border:2.5px solid #E2D8C4;border-bottom:5px solid #E2D8C4;background:#fff;font-family:'Fraunces',serif;font-size:19px;font-weight:800;color:var(--encre);cursor:pointer}
 .evagrid button.sel{background:var(--corail);border-color:var(--corail2);color:#fff}
 
 /* ── overlay (niveau / coffre) ── */
@@ -325,7 +325,7 @@ h1,h2,.disp{font-family:'Fraunces',serif}
   </div>
   <div class="card" id="derSignals"></div>
   <div class="card" id="derPro" style="border-color:var(--corail);box-shadow:0 2px 8px rgba(43,41,37,.07)"></div>
-  <div class="card" style="background:#FAF8F3">
+  <div class="card" style="background:#FBF6EC">
     <p class="sub" style="font-size:14px"><b>Votre consentement d'abord.</b> Mentavix ne transmet jamais vos coordonnées sans votre accord explicite. Ce bilan est une estimation bien-être, pas un diagnostic médical.</p>
   </div>
   <button class="btn primary mb" id="derYes">Oui, être mis en relation</button>
