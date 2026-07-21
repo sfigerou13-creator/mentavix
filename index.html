@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mentavix — Votre coach cérébral</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --fond:#FFF4E3; --carte:#FFFFFF;
-  --soleil:#FFC53D; --soleil2:#E8A400;
-  --corail:#FF8A5C; --corail2:#E06438;
-  --feuille:#3BA55D; --feuille2:#2C7F46;
-  --violet:#8B6FC9; --brique:#D9534F;
-  --encre:#41321F; --encre2:#7A6A54;
-  --lisere:#F0E4CE;
-  --r:24px;
+  --fond:#F6F3ED; --carte:#FFFFFF;
+  --soleil:#CBBFA5; --soleil2:#B3A78C;
+  --corail:#3E6B54; --corail2:#2E5240;
+  --feuille:#4A7C59; --feuille2:#3A6247;
+  --violet:#5B5F97; --brique:#A85B52;
+  --encre:#2B2925; --encre2:#6E685D;
+  --lisere:#E7E1D6; --or:#B98E4F;
+  --r:18px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -23,8 +23,7 @@ body{
   font-family:'Atkinson Hyperlegible',sans-serif;
   background:var(--fond); color:var(--encre);
   display:flex;justify-content:center;
-  background-image:radial-gradient(circle at 15% 8%, #FFE3B3 0%, transparent 40%),
-                   radial-gradient(circle at 90% 92%, #FFD9C4 0%, transparent 45%);
+  background-image:linear-gradient(180deg,#F8F5F0 0%,#F4F0E8 100%);
 }
 #app{width:100%;max-width:460px;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden}
 .screen{display:none;flex:1;flex-direction:column;padding:22px;animation:fade .4s ease;overflow-y:auto;min-height:0}
@@ -32,155 +31,152 @@ body{
 @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 
-h1,h2,.disp{font-family:'Baloo 2',cursive}
-.eyebrow{font-family:'Baloo 2',cursive;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--corail2);font-weight:800;margin-bottom:8px}
+h1,h2,.disp{font-family:'Fraunces',serif}
+.eyebrow{font-family:'Fraunces',serif;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--corail2);font-weight:800;margin-bottom:8px}
 .sub{color:var(--encre2);font-size:17px;line-height:1.55}
 .center{text-align:center}.mt{margin-top:18px}.mb{margin-bottom:18px}.spacer{flex:1}
 
-/* ── boutons "bonbon" ── */
+/* ── boutons premium ── */
 .btn{
-  display:block;width:100%;min-height:64px;border:none;border-radius:20px;
-  font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;letter-spacing:.02em;
+  display:block;width:100%;min-height:64px;border:none;border-radius:14px;
+  font-family:'Fraunces',serif;font-size:19px;font-weight:600;letter-spacing:.01em;
   cursor:pointer;padding:14px 20px;
-  color:#4A2E00;background:var(--soleil);
-  border-bottom:6px solid var(--soleil2);
-  transition:transform .08s, border-bottom-width .08s, filter .15s;
+  color:#fff;background:var(--corail);
+  box-shadow:0 2px 8px rgba(43,41,37,.10);
+  transition:transform .08s, filter .15s;
 }
-.btn:active{transform:translateY(4px);border-bottom-width:2px}
-.btn:focus-visible{outline:4px solid var(--violet);outline-offset:3px}
-.btn.primary{background:var(--corail);border-bottom-color:var(--corail2);color:#5A1F00}
-.btn.green{background:var(--feuille);border-bottom-color:var(--feuille2);color:#fff}
-.btn.ghost{background:#fff;border:2.5px solid #E8DCC8;border-bottom:6px solid #E8DCC8;color:var(--encre)}
+.btn:active{transform:translateY(1px);filter:brightness(.94)}
+.btn:focus-visible{outline:3px solid var(--violet);outline-offset:3px}
+.btn.primary{background:var(--corail2)}
+.btn.green{background:var(--feuille)}
+.btn.ghost{background:#fff;border:1.5px solid var(--lisere);color:var(--encre);box-shadow:none}
 .btn.opt{
-  background:#fff;color:var(--encre);border:2.5px solid #E8DCC8;border-bottom:6px solid #E8DCC8;
+  background:#fff;color:var(--encre);border:1.5px solid var(--lisere);box-shadow:none;
   margin-bottom:12px;font-family:'Atkinson Hyperlegible',sans-serif;font-size:19px;font-weight:700;
 }
-.btn.opt.correct{background:#E9F8EE;border-color:var(--feuille);border-bottom-color:var(--feuille2);color:var(--feuille2)}
-.btn.opt.wrong{background:#FDEEEA;border-color:var(--brique);border-bottom-color:#B03A36;color:#B03A36}
-.btn:disabled{opacity:.6;cursor:default}
+.btn.opt.correct{background:#EEF4EF;border-color:var(--feuille);color:var(--feuille2)}
+.btn.opt.wrong{background:#F8ECEA;border-color:var(--brique);color:var(--brique)}
+.btn:disabled{opacity:.55;cursor:default}
 .btnrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
 /* ── mascotte Vix ── */
-.vix-wrap{display:flex;align-items:flex-end;gap:12px;margin:8px 0 16px}
-.vix{width:110px;flex-shrink:0;animation:float 3.2s ease-in-out infinite}
-.vix.small{width:74px}
+.vix-wrap{display:block;margin:6px 0 16px}
+.vix{display:none!important}
+.vix.small{display:none!important}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 .vix.bounce{animation:bounce .55s ease}
 @keyframes bounce{0%{transform:scale(1)}35%{transform:scale(1.15) rotate(-4deg)}70%{transform:scale(.96)}100%{transform:scale(1)}}
 .bubble{
-  position:relative;background:#fff;border:2.5px solid var(--lisere);border-radius:20px;
-  padding:14px 16px;font-size:16.5px;line-height:1.5;color:var(--encre);flex:1;
-  box-shadow:0 4px 0 var(--lisere);
+  position:relative;background:transparent;border:none;border-left:3px solid var(--corail);
+  border-radius:0;padding:2px 2px 2px 14px;font-size:16.5px;line-height:1.55;color:var(--encre2);
+  box-shadow:none;
 }
-.bubble::before{
-  content:'';position:absolute;left:-11px;bottom:20px;
-  width:18px;height:18px;background:#fff;border-left:2.5px solid var(--lisere);border-bottom:2.5px solid var(--lisere);
-  transform:rotate(45deg);border-radius:0 0 0 6px;
-}
+.bubble::before{display:none}
 .bubble b{color:var(--corail2)}
 
 /* ── header séance ── */
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#FFFDF8;border-bottom:3px solid var(--lisere);position:sticky;top:0;z-index:5}
-.stat{display:flex;align-items:center;gap:7px;font-family:'Baloo 2',cursive;font-weight:800;font-size:19px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#FFFFFF;border-bottom:3px solid var(--lisere);position:sticky;top:0;z-index:5}
+.stat{display:flex;align-items:center;gap:7px;font-family:'Fraunces',serif;font-weight:800;font-size:19px}
 .stat small{color:var(--encre2);font-weight:600;font-size:11px;display:block;letter-spacing:.06em;text-transform:uppercase;font-family:'Atkinson Hyperlegible',sans-serif}
 .age-live{font-size:26px;transition:color .3s}
 .age-live.down{color:var(--feuille)} .age-live.up{color:var(--brique)}
-.gain{position:absolute;font-family:'Baloo 2',cursive;font-weight:800;font-size:20px;color:var(--feuille);animation:rise 1.2s ease forwards;pointer-events:none;z-index:60}
+.gain{position:absolute;font-family:'Fraunces',serif;font-weight:800;font-size:20px;color:var(--feuille);animation:rise 1.2s ease forwards;pointer-events:none;z-index:60}
 @keyframes rise{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(-46px)}}
 .flame{display:inline-block;animation:flick 1s ease-in-out infinite}
 @keyframes flick{0%,100%{transform:scale(1)}50%{transform:scale(1.18) rotate(-3deg)}}
 
 /* ── niveau / XP ── */
-.lvlchip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2.5px solid var(--soleil);border-radius:999px;padding:6px 14px;font-family:'Baloo 2',cursive;font-weight:800;font-size:15px;box-shadow:0 3px 0 #EFD9A6}
+.lvlchip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2.5px solid var(--soleil);border-radius:999px;padding:6px 14px;font-family:'Fraunces',serif;font-weight:800;font-size:15px;box-shadow:0 2px 8px rgba(43,41,37,.07)}
 .xpwrap{margin:8px 0 2px}
-.xpbar{height:14px;background:#F3E8D3;border:2px solid #EBDCC0;border-radius:99px;overflow:hidden}
-.xpbar i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,var(--soleil),var(--corail));transition:width .8s ease}
+.xpbar{height:14px;background:#EDE9DF;border:2px solid #E0DACC;border-radius:99px;overflow:hidden}
+.xpbar i{display:block;height:100%;width:0%;border-radius:99px;background:var(--or);transition:width .8s ease}
 .xplbl{font-size:12.5px;color:var(--encre2);font-weight:700;margin-top:4px;text-align:right}
 
 /* ── cartes ── */
-.card{background:var(--carte);border:2.5px solid var(--lisere);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 5px 0 var(--lisere)}
-.sci{display:inline-block;font-size:13px;color:var(--encre2);background:#FFF7E8;border:2px solid var(--lisere);border-radius:999px;padding:5px 13px;margin-bottom:12px;font-weight:700}
-.stim{font-family:'Baloo 2',cursive;font-size:54px;font-weight:800;text-align:center;margin:24px 0;min-height:70px}
+.card{background:var(--carte);border:2.5px solid var(--lisere);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(43,41,37,.07)}
+.sci{display:inline-block;font-size:13px;color:var(--encre2);background:#F3F0E9;border:2px solid var(--lisere);border-radius:999px;padding:5px 13px;margin-bottom:12px;font-weight:700}
+.stim{font-family:'Fraunces',serif;font-size:54px;font-weight:800;text-align:center;margin:24px 0;min-height:70px}
 .stim.small{font-size:29px;line-height:1.45}
-.progress-track{height:18px;background:#F3E8D3;border-radius:99px;margin:6px 0 16px;overflow:hidden;border:2px solid #EBDCC0}
-.progress-track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--soleil),var(--corail));transition:width .5s ease;width:0%}
+.progress-track{height:18px;background:#EDE9DF;border-radius:99px;margin:6px 0 16px;overflow:hidden;border:2px solid #E0DACC}
+.progress-track i{display:block;height:100%;border-radius:99px;background:var(--corail);transition:width .5s ease;width:0%}
 .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}
 .dot{aspect-ratio:1;border-radius:50%}
 .dot.b{background:#2E5EC4}.dot.r{background:#D9534F}
-.timerline{height:10px;background:#F3E8D3;border-radius:99px;margin:8px 0 18px;overflow:hidden;border:2px solid #EBDCC0}
+.timerline{height:10px;background:#EDE9DF;border-radius:99px;margin:8px 0 18px;overflow:hidden;border:2px solid #E0DACC}
 .timerline i{display:block;height:100%;background:var(--feuille);width:100%}
-.stroopword{font-family:'Baloo 2',cursive;font-size:60px;font-weight:800;text-align:center;margin:26px 0}
+.stroopword{font-family:'Fraunces',serif;font-size:60px;font-weight:800;text-align:center;margin:26px 0}
 .colorbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.cbtn{min-height:74px;border-radius:20px;border:none;border-bottom:6px solid rgba(0,0,0,.25);cursor:pointer;font-size:0;transition:transform .08s}
-.cbtn:active{transform:translateY(4px);border-bottom-width:2px}
+.cbtn{min-height:74px;border-radius:14px;border:none;cursor:pointer;font-size:0;transition:transform .08s;box-shadow:0 2px 8px rgba(43,41,37,.12)}
+.cbtn:active{transform:translateY(1px)}
 .cbtn:focus-visible{outline:4px solid var(--encre)}
 
 /* ── grille Trail Making / empan ── */
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
-.gcell{aspect-ratio:1;border-radius:20px;background:#fff;border:2.5px solid #E8DCC8;border-bottom:6px solid #E8DCC8;
-  font-family:'Baloo 2',cursive;font-size:32px;font-weight:800;color:var(--encre);cursor:pointer;transition:transform .08s}
-.gcell:active{transform:translateY(3px)}
-.gcell.done{background:#E9F8EE;border-color:var(--feuille);border-bottom-color:var(--feuille2);color:var(--feuille2)}
-.gcell.err{background:#FDEEEA;border-color:var(--brique);color:#B03A36}
+.gcell{aspect-ratio:1;border-radius:14px;background:#fff;border:1.5px solid var(--lisere);
+  font-family:'Fraunces',serif;font-size:30px;font-weight:600;color:var(--encre);cursor:pointer;transition:transform .08s}
+.gcell:active{transform:translateY(1px)}
+.gcell.done{background:#EEF4EF;border-color:var(--feuille);color:var(--feuille2)}
+.gcell.err{background:#F8ECEA;border-color:var(--brique);color:var(--brique)}
 .digitpad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
 .digitpad .gcell{aspect-ratio:auto;min-height:66px}
 
 /* ── zone réflexe (PVT / Go-NoGo) ── */
 .reflexzone{min-height:190px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;
-  font-family:'Baloo 2',cursive;font-size:30px;font-weight:800;cursor:pointer;user-select:none;
-  border:3px dashed #E8DCC8;color:var(--encre2);margin:14px 0;transition:background .15s}
-.reflexzone.wait{background:#FDEEEA;border-color:var(--brique);color:#B03A36;border-style:solid}
-.reflexzone.go{background:#E9F8EE;border-color:var(--feuille);color:var(--feuille2);border-style:solid;font-size:38px}
+  font-family:'Fraunces',serif;font-size:30px;font-weight:800;cursor:pointer;user-select:none;
+  border:3px dashed #E0DACC;color:var(--encre2);margin:14px 0;transition:background .15s}
+.reflexzone.wait{background:#F8ECEA;border-color:var(--brique);color:var(--brique);border-style:solid}
+.reflexzone.go{background:#EEF4EF;border-color:var(--feuille);color:var(--feuille2);border-style:solid;font-size:38px}
 
 /* ── grand chrono équilibre ── */
-.bigtimer{font-family:'Baloo 2',cursive;font-size:84px;font-weight:800;text-align:center;color:var(--corail2);margin:10px 0}
+.bigtimer{font-family:'Fraunces',serif;font-size:84px;font-weight:800;text-align:center;color:var(--corail2);margin:10px 0}
 
 /* ── résultats & badges ── */
 .dial-wrap{margin:10px auto;position:relative;width:200px;height:200px}
 .dial-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
 .dial-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.dial-num .big{font-family:'Baloo 2',cursive;font-size:52px;font-weight:800;line-height:1}
+.dial-num .big{font-family:'Fraunces',serif;font-size:52px;font-weight:800;line-height:1}
 .dial-num .lbl{font-size:12px;color:var(--encre2);letter-spacing:.1em;text-transform:uppercase;margin-top:4px;font-weight:700}
 .domrow{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .domrow .em{font-size:26px;width:34px}
 .domrow .name{width:118px;font-size:15px;font-weight:700}
-.domrow .bar{flex:1;height:16px;background:#F3E8D3;border-radius:99px;overflow:hidden;border:2px solid #EBDCC0}
+.domrow .bar{flex:1;height:16px;background:#EDE9DF;border-radius:99px;overflow:hidden;border:2px solid #E0DACC}
 .domrow .bar i{display:block;height:100%;border-radius:99px;transition:width .7s ease;width:0%}
 .domrow .pct{width:46px;text-align:right;font-weight:700;font-size:15px}
 .domrow.faded{opacity:.55}
-.badge{display:flex;gap:14px;align-items:center;background:#FFF9EC;border:2.5px solid var(--soleil);border-radius:var(--r);padding:15px;margin-bottom:12px;box-shadow:0 4px 0 #EFD9A6;animation:pop .5s ease}
+.badge{display:flex;gap:14px;align-items:center;background:#FAF8F3;border:2.5px solid var(--soleil);border-radius:var(--r);padding:15px;margin-bottom:12px;box-shadow:0 2px 8px rgba(43,41,37,.07);animation:pop .5s ease}
 @keyframes pop{0%{transform:scale(.8);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
-.badge .ic{font-size:34px}
-.badge b{display:block;font-size:17px;font-family:'Baloo 2',cursive}.badge small{color:var(--encre2)}
+.badge .ic{font-size:24px}
+.badge b{display:block;font-size:17px;font-family:'Fraunces',serif}.badge small{color:var(--encre2)}
 .feedback-zone{display:flex;align-items:flex-end;gap:10px;min-height:96px;margin-top:8px}
 .feedback-zone .bubble{font-size:15.5px;padding:11px 14px}
 .feedback-zone .bubble::before{bottom:14px}
-.confetti{position:absolute;top:-12px;font-size:24px;animation:fall linear forwards;z-index:50;pointer-events:none}
+.confetti{position:absolute;top:-12px;font-size:16px;color:var(--or);animation:fall linear forwards;z-index:50;pointer-events:none}
 @keyframes fall{to{transform:translateY(110vh) rotate(560deg);opacity:.2}}
 .pill{display:inline-flex;align-items:center;gap:7px;background:#fff;border:2px solid var(--lisere);border-radius:999px;padding:8px 15px;font-size:14.5px;font-weight:700;color:var(--encre2);margin:4px 4px 0 0}
 
 /* ── jardin cognitif ── */
 .plantrow{display:flex;align-items:center;gap:12px;margin-bottom:15px;cursor:pointer;border-radius:14px;padding:4px;transition:background .15s}
-.plantrow:active{background:#FFF7E8}
-.plantrow .chev{font-family:'Baloo 2',cursive;font-size:22px;color:var(--corail2);font-weight:800}
+.plantrow:active{background:#F3F0E9}
+.pdot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin:0 16px}
+.plantrow .chev{font-family:'Fraunces',serif;font-size:22px;color:var(--corail2);font-weight:800}
 .plantrow .plant{font-size:34px;width:44px;text-align:center;transition:filter .4s}
 .plantrow.wilt .plant{filter:grayscale(.75) opacity(.75)}
 .plantrow .pname{width:118px;font-size:15px;font-weight:700;line-height:1.2}
 .plantrow .pname small{display:block;font-weight:400;color:var(--encre2);font-size:12px}
-.plantrow .bar{flex:1;height:16px;background:#F3E8D3;border-radius:99px;overflow:hidden;border:2px solid #EBDCC0}
+.plantrow .bar{flex:1;height:16px;background:#EDE9DF;border-radius:99px;overflow:hidden;border:2px solid #E0DACC}
 .plantrow .bar i{display:block;height:100%;border-radius:99px;transition:width .7s ease}
 .curve{width:100%;height:120px;margin:4px 0 2px}
 .legend{font-size:12.5px;color:var(--encre2);font-weight:700;text-align:center;margin-bottom:6px}
 .disclaimer{font-size:12px;color:var(--encre2);text-align:center;margin-top:14px;line-height:1.5}
 .resetlink{background:none;border:none;color:var(--encre2);font-size:12px;text-decoration:underline;cursor:pointer;margin-top:10px;font-family:inherit}
 .evagrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.evagrid button{min-height:50px;border-radius:14px;border:2.5px solid #E8DCC8;border-bottom:5px solid #E8DCC8;background:#fff;font-family:'Baloo 2',cursive;font-size:19px;font-weight:800;color:var(--encre);cursor:pointer}
+.evagrid button{min-height:50px;border-radius:14px;border:2.5px solid #E0DACC;border-bottom:5px solid #E0DACC;background:#fff;font-family:'Fraunces',serif;font-size:19px;font-weight:800;color:var(--encre);cursor:pointer}
 .evagrid button.sel{background:var(--corail);border-color:var(--corail2);color:#fff}
 
 /* ── overlay (niveau / coffre) ── */
 #ovl{position:absolute;inset:0;background:rgba(65,50,31,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:26px;backdrop-filter:blur(2px)}
 #ovl.show{display:flex}
-.ovlcard{background:var(--fond);border:3px solid var(--soleil);border-radius:28px;padding:30px 24px;text-align:center;width:100%;max-width:360px;box-shadow:0 8px 0 var(--soleil2);animation:pop .5s ease}
+.ovlcard{background:var(--fond);border:3px solid var(--soleil);border-radius:28px;padding:30px 24px;text-align:center;width:100%;max-width:360px;box-shadow:0 2px 8px rgba(43,41,37,.07);animation:pop .5s ease}
 .ovlcard .huge{font-size:72px;margin:6px 0;display:inline-block}
 .ovlcard .huge.shake{animation:wobble .8s ease infinite}
 @keyframes wobble{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
@@ -195,17 +191,17 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
   <h1 class="disp" style="font-size:38px;color:var(--corail2)">Mentavix</h1>
   <div class="vix-wrap" style="margin-top:18px">
     <div class="vix" id="vixHome"></div>
-    <div class="bubble">Bonjour, je suis <b>Vix</b> ! 👋<br>Votre coach cérébral personnel. Prêt à découvrir la forme de votre cerveau ? Promis, c'est amusant !</div>
+    <div class="bubble">Votre <b>coach cérébral</b> personnel. Un bilan fondé sur des tests cliniques reconnus, puis un entraînement quotidien adapté à vos résultats.</div>
   </div>
-  <h2 style="font-size:27px;line-height:1.25;margin:10px 0 12px">Gardez un esprit affûté,<br>15 minutes par jour. 🌞</h2>
+  <h2 style="font-size:27px;line-height:1.25;margin:10px 0 12px">Il n'y a pas de fatalité.<br>Seulement 15 minutes par jour.</h2>
   <p class="sub">Des mini-jeux issus de la recherche clinique, un âge cérébral à faire fondre, et des récompenses chaque jour.</p>
   <div class="mt">
-    <span class="pill">🔬 Science validée</span>
-    <span class="pill">🎁 Récompenses</span>
-    <span class="pill">🔥 Défis quotidiens</span>
+    <span class="pill">Science validée</span>
+    <span class="pill">Suivi personnalisé</span>
+    <span class="pill">Progrès mesurés</span>
   </div>
   <div class="spacer"></div>
-  <button class="btn primary" onclick="go('s-age')">C'est parti ! 🚀</button>
+  <button class="btn primary" onclick="go('s-age')">Commencer mon bilan</button>
   <p class="center sub mt" style="font-size:14px">Bilan gratuit · 3 minutes</p>
 </section>
 
@@ -214,18 +210,18 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
   <div class="eyebrow">Étape 1 · Faisons connaissance</div>
   <div class="vix-wrap">
     <div class="vix small" id="vixAge"></div>
-    <div class="bubble">Quel âge avez-vous ? J'en ai besoin pour calibrer vos tests — c'est notre point de départ scientifique. 🎯</div>
+    <div class="bubble">Quel âge avez-vous ? Il sert de point de départ pour calibrer vos tests.</div>
   </div>
   <div class="card center">
     <div class="stepper" style="display:flex;align-items:center;gap:14px;justify-content:center;margin:10px 0">
-      <button onclick="stepAge(-1)" aria-label="Diminuer" style="width:70px;height:70px;border-radius:50%;border:none;background:var(--soleil);border-bottom:5px solid var(--soleil2);font-size:34px;font-family:'Baloo 2',cursive;font-weight:800;color:#4A2E00;cursor:pointer">−</button>
+      <button onclick="stepAge(-1)" aria-label="Diminuer" style="width:70px;height:70px;border-radius:50%;border:none;background:var(--soleil);border-bottom:5px solid var(--soleil2);font-size:34px;font-family:'Fraunces',serif;font-weight:800;color:#2B2925;cursor:pointer">−</button>
       <div class="disp" id="ageVal" style="font-size:56px;font-weight:800;width:110px;text-align:center">65</div>
-      <button onclick="stepAge(1)" aria-label="Augmenter" style="width:70px;height:70px;border-radius:50%;border:none;background:var(--soleil);border-bottom:5px solid var(--soleil2);font-size:34px;font-family:'Baloo 2',cursive;font-weight:800;color:#4A2E00;cursor:pointer">+</button>
+      <button onclick="stepAge(1)" aria-label="Augmenter" style="width:70px;height:70px;border-radius:50%;border:none;background:var(--soleil);border-bottom:5px solid var(--soleil2);font-size:34px;font-family:'Fraunces',serif;font-weight:800;color:#2B2925;cursor:pointer">+</button>
     </div>
     <p class="sub" style="font-size:15px">ans</p>
   </div>
   <div class="spacer"></div>
-  <button class="btn primary" onclick="go('s-acou')">Continuer ➜</button>
+  <button class="btn primary" onclick="go('s-acou')">Continuer</button>
 </section>
 
 <!-- ══════ ACOUPHÈNES ══════ -->
@@ -241,7 +237,7 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
     <button class="btn opt" onclick="acouQ1(false)">Non</button>
   </div>
   <div class="spacer"></div>
-  <p class="disclaimer">Cette question aide Vix à personnaliser votre accompagnement.</p>
+  <p class="disclaimer">Cette question nous aide à personnaliser votre accompagnement.</p>
 </section>
 
 <!-- ══════ TRANSITION ══════ -->
@@ -270,7 +266,7 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
   <div class="eyebrow">Votre bilan cognitif</div>
   <div class="vix-wrap">
     <div class="vix small" id="vixRes"></div>
-    <div class="bubble" id="resBubble">Voici votre point de départ ! Chaque séance le fera baisser. ⬇️</div>
+    <div class="bubble" id="resBubble">Voici votre point de départ. Chaque séance travaillera à le faire baisser.</div>
   </div>
   <div class="dial-wrap">
     <svg viewBox="0 0 100 100">
@@ -283,7 +279,7 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
   <p class="center sub" style="font-size:13.5px;margin-bottom:16px">Estimation basée sur 4 tests cliniques — elle s'affinera sur 14 jours.</p>
   <div class="card" id="domains"></div>
   <div id="resBadge"></div>
-  <button class="btn primary mt" onclick="startFeed()">Commencer l'entraînement 🏋️</button>
+  <button class="btn primary mt" onclick="startFeed()">Commencer l'entraînement</button>
   <p class="disclaimer">Mentavix ne remplace pas un avis médical.</p>
 </section>
 
@@ -303,18 +299,18 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
       <div class="xpwrap"><div class="xpbar"><i id="gXp"></i></div><div class="xplbl" id="gXpLbl"></div></div>
     </div>
     <div class="card" style="padding:18px">
-      <p class="sub" style="font-weight:700;margin-bottom:4px">🌻 Votre jardin cognitif</p>
-      <p class="sub" style="font-size:13.5px;margin-bottom:12px">Touchez une plante pour <b>entraîner ce pilier</b> 💧</p>
+      <p class="sub" style="font-weight:700;margin-bottom:4px">Vos 7 piliers</p>
+      <p class="sub" style="font-size:13.5px;margin-bottom:12px">Touchez un pilier pour lancer un <b>entraînement ciblé</b>.</p>
       <div id="gPlants"></div>
     </div>
     <div id="gExtras"></div>
     <div class="card" style="padding:18px">
-      <p class="sub" style="font-weight:700;margin-bottom:6px">📉 Âge cérébral — 14 derniers jours</p>
+      <p class="sub" style="font-weight:700;margin-bottom:6px">Âge cérébral — 14 derniers jours</p>
       <svg class="curve" id="gCurve" viewBox="0 0 300 100" preserveAspectRatio="none"></svg>
       <p class="legend" id="gCurveLbl"></p>
     </div>
     <div id="gBadges"></div>
-    <button class="btn primary" onclick="startFeed()">Ma séance du jour ⚡</button>
+    <button class="btn primary" onclick="startFeed()">Ma séance du jour</button>
     <p class="disclaimer">Âge cérébral = estimation bien-être, pas un diagnostic.<br>Mentavix ne remplace pas un avis médical.</p>
     <div class="center"><button class="resetlink" onclick="resetAll()">Réinitialiser mes données</button> · <button class="resetlink" onclick="showDerive('audition',true)">Démo : bilan de dérivation</button></div>
   </div>
@@ -322,41 +318,41 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
 
 <!-- ══════ DÉRIVATION PRO ══════ -->
 <section class="screen" id="s-derive">
-  <div class="eyebrow">Bilan approfondi 🤝</div>
+  <div class="eyebrow">Bilan approfondi</div>
   <div class="vix-wrap">
     <div class="vix small" id="vixDer"></div>
     <div class="bubble" id="derBubble"></div>
   </div>
   <div class="card" id="derSignals"></div>
-  <div class="card" id="derPro" style="border-color:var(--corail);box-shadow:0 4px 0 #F5C9B4"></div>
-  <div class="card" style="background:#FFF9EC">
+  <div class="card" id="derPro" style="border-color:var(--corail);box-shadow:0 2px 8px rgba(43,41,37,.07)"></div>
+  <div class="card" style="background:#FAF8F3">
     <p class="sub" style="font-size:14px"><b>Votre consentement d'abord.</b> Mentavix ne transmet jamais vos coordonnées sans votre accord explicite. Ce bilan est une estimation bien-être, pas un diagnostic médical.</p>
   </div>
-  <button class="btn primary mb" id="derYes">Oui, être mis en relation 🤝</button>
+  <button class="btn primary mb" id="derYes">Oui, être mis en relation</button>
   <button class="btn ghost" id="derNo">Non merci, je continue l'entraînement</button>
   <p class="disclaimer">Mentavix ne remplace pas un avis médical.</p>
 </section>
 
 <!-- ══════ ESPACE ACOUPHÈNES ══════ -->
 <section class="screen" id="s-tinnitus">
-  <div class="eyebrow">Espace acouphènes 🎧</div>
+  <div class="eyebrow">Espace acouphènes</div>
   <div class="vix-wrap">
     <div class="vix small" id="vixTin"></div>
-    <div class="bubble">L'objectif n'est pas de lutter contre le bruit, mais d'apprendre au cerveau à <b>ne plus y prêter attention</b>. C'est l'habituation. 🔬 TRT (Jastreboff)</div>
+    <div class="bubble">L'objectif n'est pas de lutter contre le bruit, mais d'apprendre au cerveau à <b>ne plus y prêter attention</b>. C'est le principe de l'habituation — TRT (Jastreboff).</div>
   </div>
   <div class="card">
-    <p class="sub" style="font-weight:700;margin-bottom:6px">🔊 Thérapie sonore</p>
+    <p class="sub" style="font-weight:700;margin-bottom:6px">Thérapie sonore</p>
     <p class="sub" style="font-size:14px;margin-bottom:12px">Un bruit doux, en fond, aide le cerveau à « classer sans suite » l'acouphène. À écouter quelques minutes, volume faible.</p>
     <button class="btn green" id="tinPlayBtn" onclick="tinToggle()">▶️ Lancer le bruit apaisant</button>
   </div>
   <div class="card">
-    <p class="sub" style="font-weight:700;margin-bottom:6px">📏 Votre gêne aujourd'hui ?</p>
+    <p class="sub" style="font-weight:700;margin-bottom:6px">Votre gêne aujourd'hui</p>
     <p class="sub" style="font-size:14px;margin-bottom:10px">0 = aucune gêne · 10 = très gênant</p>
     <div class="evagrid" id="evaGrid"></div>
     <p class="sub center" id="evaMsg" style="font-size:14px;margin-top:10px;min-height:20px"></p>
   </div>
   <div class="card" id="tinConseil"></div>
-  <div class="card" id="tinDeriv" style="border-color:var(--corail);box-shadow:0 4px 0 #F5C9B4"></div>
+  <div class="card" id="tinDeriv" style="border-color:var(--corail);box-shadow:0 2px 8px rgba(43,41,37,.07)"></div>
   <button class="btn ghost" onclick="tinBack()">← Retour au jardin</button>
   <p class="disclaimer">Cet espace ne remplace pas un avis médical ou ORL.</p>
 </section>
@@ -388,7 +384,7 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
 <section class="screen" id="s-end">
   <div class="spacer"></div>
   <div class="center"><div class="vix" id="vixEnd" style="margin:0 auto;width:130px"></div></div>
-  <h2 class="center" style="font-size:30px;margin:10px 0 6px">Bravo ! 🎉</h2>
+  <h2 class="center" style="font-size:30px;margin:10px 0 6px">Séance terminée</h2>
   <p class="center sub mb" id="endSummary"></p>
   <div class="card center" style="padding:16px">
     <span class="disp" style="font-size:16px;color:var(--encre2)">Âge cérébral</span>
@@ -396,24 +392,24 @@ h1,h2,.disp{font-family:'Baloo 2',cursive}
     <span class="disp" id="endDelta" style="font-size:17px;color:var(--feuille)"></span>
   </div>
   <div id="endBadges"></div>
-  <div class="card center" id="endStreakCard" style="border-color:var(--corail);box-shadow:0 4px 0 #F5C9B4">
+  <div class="card center" id="endStreakCard" style="border-color:var(--corail);box-shadow:0 2px 8px rgba(43,41,37,.07)">
     <b class="disp" id="endStreakTxt" style="font-size:19px">🔥 Série : 1 jour</b>
     <p class="sub" id="endStreakSub" style="font-size:15px;margin-top:6px"></p>
   </div>
   <div class="spacer"></div>
-  <button class="btn green" id="endChestBtn" onclick="openChest()" style="display:none">🎁 Ouvrir le coffre du jour</button>
-  <button class="btn primary mt" onclick="startFeed()">Encore une séance ! ⚡</button>
-  <button class="btn ghost mt" onclick="showGarden()">Voir mon jardin cognitif 🌻</button>
+  <button class="btn green" id="endChestBtn" onclick="openChest()" style="display:none">Ouvrir le coffre du jour</button>
+  <button class="btn primary mt" onclick="startFeed()">Encore une séance</button>
+  <button class="btn ghost mt" onclick="showGarden()">Voir mon tableau de bord</button>
 </section>
 
 <!-- ══════ OVERLAY (niveau / coffre) ══════ -->
 <div id="ovl" role="dialog" aria-modal="true">
   <div class="ovlcard">
     <div class="rays">✦ ✦ ✦</div>
-    <div class="huge" id="ovlEmoji">🎉</div>
+    <div class="huge" id="ovlEmoji">✦</div>
     <h2 class="disp" id="ovlTitle" style="font-size:27px;margin:4px 0">Niveau 2 !</h2>
     <p class="sub" id="ovlSub" style="margin-bottom:18px"></p>
-    <button class="btn primary" onclick="closeOvl()" id="ovlBtn">Merci Vix ! 🙌</button>
+    <button class="btn primary" onclick="closeOvl()" id="ovlBtn">Continuer</button>
   </div>
 </div>
 
@@ -543,7 +539,7 @@ function showOvl(emoji,title,sub,btn,cb,shake){
   $('ovlEmoji').classList.toggle('shake',!!shake);
   $('ovlTitle').textContent=title;
   $('ovlSub').innerHTML=sub;
-  $('ovlBtn').textContent=btn||'Merci Vix ! 🙌';
+  $('ovlBtn').textContent=btn||'Continuer';
   ovlCb=cb||null;
   $('ovl').classList.add('show');
 }
@@ -554,7 +550,7 @@ function checkLevelUp(){
   if(li.n>lastLevel){
     lastLevel=li.n;
     confetti();
-    showOvl(li.cur.em,'Niveau '+li.n+' !','Vous êtes désormais <b>'+li.cur.t+'</b> '+li.cur.em+'<br>Vix est très fier de vous.','Continuer 🙌');
+    showOvl(li.cur.em,'Niveau '+li.n+' !','Vous êtes désormais <b>'+li.cur.t+'</b> '+li.cur.em+'<br>Continuez sur cette lancée.','Continuer');
   }
 }
 /* ═══════════════════ BILAN INITIAL (4 tests cliniques) ═══════════════════ */
@@ -693,8 +689,8 @@ function showResults(){
   $('resAge').style.color=better?'var(--feuille)':'var(--brique)';
   setVix('vixRes', better?'joy':'happy');
   $('resBubble').innerHTML = better
-    ? 'Impressionnant ! Votre cerveau est <b>plus jeune que vous</b>. Entretenons ça ! 💪'
-    : `Votre cerveau a <b>${(D.brainAge-D.age).toFixed(1)} an(s) d'avance</b> sur vous… Bonne nouvelle : chaque séance le rajeunit. On s'y met ? 💪`;
+    ? 'Votre cerveau est <b>plus jeune que votre âge</b>. Entretenons cette avance.'
+    : `Votre cerveau a <b>${(D.brainAge-D.age).toFixed(1)} an(s) d'avance</b> sur vous. Chaque séance travaille à réduire cet écart.`;
   const measured=['vitesse','inhibition','memoire'];
   $('domains').innerHTML='<p class="sub" style="margin-bottom:14px;font-weight:700">Votre réserve cognitive :</p>'+
     Object.keys(PILLARS).map(k=>{
@@ -761,9 +757,9 @@ function showGarden(){
     const wilt = wd>=4;
     const never = !pi.last;
     const c=v>=75?'var(--feuille)':v>=55?'var(--soleil)':'var(--brique)';
-    const note = never ? 'jamais exploré' : wilt ? 'a soif ! ('+wd+' j sans exercice)' : wd===0 ? 'arrosé aujourd\'hui 💧' : 'en forme';
+    const note = never ? 'jamais exploré' : wilt ? 'en attente ('+wd+' j sans exercice)' : wd===0 ? 'travaillé aujourd\'hui' : 'en forme';
     return `<div class="plantrow ${wilt?'wilt':''}" onclick="startFeed('${k}')" role="button" tabindex="0" aria-label="Entraîner le pilier ${P.name}">
-      <span class="plant">${wilt?'🥀':P.plant}</span>
+      <span class="pdot" style="background:${never?'#C9BFA5':wilt?'#C08A45':'#4A7C59'}"></span>
       <span class="pname">${P.em} ${P.name}<small>${note}</small></span>
       <div class="bar"><i style="background:${never?'#D8CBB2':c};width:${never?15:v}%"></i></div>
       <span class="chev">›</span>
@@ -774,13 +770,13 @@ function showGarden(){
   const doneToday=D.lastDay===todayStr();
   setVix('vixGarden', doneToday?'joy':'happy');
   $('gardenBubble').innerHTML = doneToday
-    ? 'Séance du jour <b>accomplie</b> ! Revenez demain pour prolonger votre série 🔥'
-    : thirsty.length ? 'Votre <b>'+PILLARS[thirsty[0]].name.toLowerCase()+'</b> a un peu soif… une petite séance pour l\'arroser ? 💧'
-    : D.streak>0 ? 'Série de <b>'+D.streak+' jour'+(D.streak>1?'s':'')+'</b> 🔥 — on la prolonge aujourd\'hui ?'
-    : 'Content de vous revoir ! Votre cerveau aussi. 😊';
+    ? 'Séance du jour <b>accomplie</b>. Revenez demain pour prolonger votre série.'
+    : thirsty.length ? 'Votre pilier <b>'+PILLARS[thirsty[0]].name.toLowerCase()+'</b> n\'a pas été travaillé depuis quelques jours. Une séance ciblée ?'
+    : D.streak>0 ? 'Série de <b>'+D.streak+' jour'+(D.streak>1?'s':'')+'</b> en cours. On la prolonge ?'
+    : 'Content de vous revoir. Votre entraînement vous attend.';
   /* cartes dérivation, corps & acouphènes */
   $('gExtras').innerHTML=deriveCardHTML()+
-    '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">💪 Anti-sarcopénie</p>'+
+    '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Anti-sarcopénie</p>'+
     '<p class="sub" style="font-size:14px;margin-bottom:12px">Le muscle protège le cerveau (Commission Lancet 2020). 4 exercices doux et guidés, 3 minutes.</p>'+
     '<button class="btn green" onclick="startFeed(\'corps\')">Séance corps guidée 🤸</button></div>'+
     (D.tinnitus.has
@@ -818,7 +814,7 @@ function drawCurve(){
     pts.map((p,i)=>'<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(p.ba).toFixed(1)+'" r="4" fill="#2C7F46"/>').join('');
   const delta=(pts[pts.length-1].ba-pts[0].ba);
   $('gCurveLbl').textContent = delta<0
-    ? '−'+Math.abs(delta).toFixed(1)+' an'+(Math.abs(delta)>=2?'s':'')+' sur la période — beau travail ! 🎉'
+    ? '−'+Math.abs(delta).toFixed(1)+' an'+(Math.abs(delta)>=2?'s':'')+' sur la période — beau travail.'
     : delta===0 ? 'Stable — la régularité va payer !' : '+'+delta.toFixed(1)+' an — une séance aujourd\'hui pour inverser la tendance ?';
 }
 /* ═══════════════ DÉRIVATION PRO (règle du brief : jamais de spam) ═══════════════ */
@@ -846,10 +842,10 @@ function deriveCardHTML(){
   const c=deriveCandidates();
   if(!c.length) return '';
   const k=c[0],Pp=PILLARS[k];
-  return '<div class="card" style="padding:18px;border-color:var(--violet);box-shadow:0 4px 0 #D8CCF0">'+
-    '<p class="sub" style="font-weight:700;margin-bottom:4px">🤝 Un coup de pouce ?</p>'+
-    '<p class="sub" style="font-size:14px;margin-bottom:12px">Vix a remarqué que votre pilier <b>'+Pp.name+'</b> stagne malgré vos efforts. Un professionnel pourrait vous aider — seulement si vous le souhaitez.</p>'+
-    '<button class="btn" style="background:var(--violet);border-bottom-color:#6E54A8;color:#fff" onclick="showDerive(\''+k+'\')">Voir le bilan '+Pp.em+'</button></div>';
+  return '<div class="card" style="padding:18px;border-color:var(--violet);box-shadow:0 2px 8px rgba(43,41,37,.07)">'+
+    '<p class="sub" style="font-weight:700;margin-bottom:4px">Un accompagnement ?</p>'+
+    '<p class="sub" style="font-size:14px;margin-bottom:12px">Mentavix a observé que votre pilier <b>'+Pp.name+'</b> stagne malgré vos efforts. Un professionnel pourrait vous aider — seulement si vous le souhaitez.</p>'+
+    '<button class="btn" style="background:var(--violet);border-bottom-color:#6E54A8;color:#fff" onclick="showDerive(\''+k+'\')">Voir le bilan</button></div>';
 }
 function showDerive(k,demo){
   const Pp=PILLARS[k], p=D.pillars[k], pro=PROS[k];
@@ -871,10 +867,10 @@ function deriveAnswer(k,yes){
   if(yes){
     (D.derivations=D.derivations||[]).push({d:todayStr(),pillar:k,pro:PROS[k].spec});
     save();
-    showOvl('🤝','Demande transmise !','(Maquette) Un <b>'+PROS[k].spec.toLowerCase()+'</b> proche de chez vous recevrait votre demande et vous rappellerait. Vos données ne quittent pas ce prototype.','Parfait 👍',()=>showGarden());
+    showOvl('🤝','Demande transmise !','(Maquette) Un <b>'+PROS[k].spec.toLowerCase()+'</b> proche de chez vous recevrait votre demande et vous rappellerait. Vos données ne quittent pas ce prototype.','Parfait',()=>showGarden());
   } else {
     save();
-    showOvl('💪','Très bien !','On continue l\'entraînement ensemble. Vix ne vous reposera plus la question pour ce pilier.','Merci Vix',()=>showGarden());
+    showOvl('✔','Très bien.','On continue l\'entraînement. La question ne vous sera plus posée pour ce pilier.','Continuer',()=>showGarden());
   }
 }
 
@@ -921,7 +917,7 @@ function evaLog(v){
   const t=todayStr(), arr=D.tinnitus.eva;
   const cur=arr.find(e=>e.d===t);
   if(cur){ cur.v=v; $('evaMsg').textContent='Mis à jour ✔️'; }
-  else { arr.push({d:t,v:v}); D.neurones+=5; gainFx('+5 ⚡'); $('evaMsg').innerHTML='Merci ! <b>+5 neurones</b> pour ce suivi 📈'; }
+  else { arr.push({d:t,v:v}); D.neurones+=5; gainFx('+5'); $('evaMsg').innerHTML='Merci ! <b>+5 neurones</b> pour ce suivi 📈'; }
   if(arr.length>90) D.tinnitus.eva=arr.slice(-90);
   save(); renderEva();
 }
@@ -946,7 +942,7 @@ function showTinnitus(){
   go('s-tinnitus');
 }
 function tinConsent(){
-  showOvl('🤝','Demande enregistrée !','Dans la version finale, Mentavix transmettrait vos coordonnées — <b>avec votre consentement</b> — à un professionnel proche de chez vous. Aucune donnée n\'est envoyée dans ce prototype.','Compris 👍');
+  showOvl('🤝','Demande enregistrée !','Dans la version finale, Mentavix transmettrait vos coordonnées — <b>avec votre consentement</b> — à un professionnel proche de chez vous. Aucune donnée n\'est envoyée dans ce prototype.','Compris');
 }
 
 /* ═══════════════════ AUDIO : brouhaha + voix (DIN) ═══════════════════ */
@@ -996,7 +992,7 @@ const GEN = {
       let replayed=false;
       const ask=()=>{
         $('fInstr').textContent='Quel était le chiffre du milieu ?';
-        $('fStim').className='stim'; $('fStim').textContent='👂 ➜ ?';
+        $('fStim').className='stim'; $('fStim').textContent='?';
         opts($('fOpts'),shuffle([digits[1],digits[0],digits[2],pool[3]]).map(String),String(digits[1]),cb);
       };
       const play=()=>{
@@ -1007,15 +1003,15 @@ const GEN = {
           if(!replayed){
             replayed=true;
             $('fInstr').textContent='Vous pouvez réécouter une fois, ou répondre.';
-            $('fOpts').innerHTML='<button class="btn ghost mb" id="replayBtn">🔁 Réécouter (1 fois)</button><button class="btn primary" id="answerBtn">Je réponds ! ✋</button>';
+            $('fOpts').innerHTML='<button class="btn ghost mb" id="replayBtn">Réécouter (1 fois)</button><button class="btn primary" id="answerBtn">Je réponds</button>';
             $('replayBtn').onclick=play; $('answerBtn').onclick=ask;
           } else ask();
         },500); }); },700);
       };
       if('speechSynthesis' in window){
-        $('fInstr').textContent='Montez le volume 🔊 — vous allez entendre 3 chiffres cachés dans un brouhaha.';
-        $('fStim').className='stim'; $('fStim').textContent='👂';
-        $('fOpts').innerHTML='<button class="btn primary" id="listenBtn">🔊 Écouter les 3 chiffres</button>';
+        $('fInstr').textContent='Montez le volume — vous allez entendre 3 chiffres dans un brouhaha.';
+        $('fStim').className='stim'; $('fStim').textContent='···';
+        $('fOpts').innerHTML='<button class="btn primary" id="listenBtn">Écouter les 3 chiffres</button>';
         $('listenBtn').onclick=play;
       } else {
         $('fInstr').textContent='Mémorisez ces 3 chiffres… vite !';
@@ -1044,13 +1040,13 @@ const GEN = {
           const isGo=Math.random()<.6;
           tapped=false; active=true;
           rz.className='reflexzone '+(isGo?'go':'wait');
-          rz.textContent=isGo?'🟢 TAPEZ !':'🔴 NE BOUGEZ PAS';
+          rz.textContent=isGo?'TAPEZ':'NE BOUGEZ PAS';
           setTimeout(()=>{
             active=false;
             const good=isGo?tapped:!tapped;
             if(good)ok++;
             rz.className='reflexzone';
-            rz.textContent=good?'✔️ Bien vu !':'✖️ Piégé !';
+            rz.textContent=good?'Bien vu':'Raté — on continue';
             setTimeout(next,700);
           },1400);
         },600+Math.random()*900);
@@ -1070,7 +1066,7 @@ const GEN = {
         $('fStim').textContent=`${a} + ${b}`;
         opts($('fOpts'),shuffle([r,r+1,r-2,r+3].map(String)),String(r),g1=>{
           $('fInstr').textContent='Et maintenant… quel était le mot à retenir ?';
-          $('fStim').textContent='🤔';
+          $('fStim').textContent='…';
           opts($('fOpts'),shuffle([w,'BOUQUETIN','HORIZON','MÉSANGE']),w,g2=>cb(g1&&g2),600);
         },600);
       },3000);
@@ -1088,7 +1084,7 @@ const GEN = {
           setTimeout(()=>{ $('fStim').textContent=''; setTimeout(show,250); },900);
         } else {
           $('fInstr').textContent='Tapez-les du DERNIER au PREMIER :';
-          $('fStim').textContent='↩️ _ _ _';
+          $('fStim').textContent='_ _ _';
           const target=[...seq].reverse();
           const btns=shuffle([...seq,...pool.slice(3,6)]);
           let pos=0, fail=false;
@@ -1097,7 +1093,7 @@ const GEN = {
             if(pos>=3) return;
             const v=+b.dataset.v;
             if(v===target[pos]){ b.classList.add('done'); pos++;
-              $('fStim').textContent='↩️ '+target.slice(0,pos).join(' ')+' _ _ _'.slice(0,(3-pos)*2);
+              $('fStim').textContent=''+target.slice(0,pos).join(' ')+' _ _ _'.slice(0,(3-pos)*2);
               if(pos===3) setTimeout(()=>cb(!fail),500);
             } else { fail=true; b.classList.add('err'); setTimeout(()=>b.classList.remove('err'),450); }
           });
@@ -1130,7 +1126,7 @@ const GEN = {
         {set:['Cuivre','Fer','Zinc'],odd:'Granit'},
         {set:['Merle','Moineau','Hirondelle'],odd:'Chauve-souris'}]);
       $('fInstr').textContent='Un de ces mots ne va pas avec les autres… lequel ?';
-      $('fStim').className='stim small'; $('fStim').textContent='🕵️';
+      $('fStim').className='stim small'; $('fStim').textContent='';
       opts($('fOpts'),shuffle([S.odd,...S.set]),S.odd,cb);
     }},
 
@@ -1210,11 +1206,11 @@ const GEN = {
       const delay=1500+Math.random()*2200;
       to=setTimeout(()=>{
         state='go'; t0=performance.now();
-        rz.className='reflexzone go'; rz.textContent='🟢 TAPEZ !';
+        rz.className='reflexzone go'; rz.textContent='TAPEZ';
         setTimeout(()=>{ if(state==='go'){ state='off'; cb(false); } },2500);
       },delay);
       rz.onclick=()=>{
-        if(state==='wait'){ state='off'; clearTimeout(to); rz.className='reflexzone'; rz.textContent='Trop tôt ! 😅'; setTimeout(()=>cb(false),700); }
+        if(state==='wait'){ state='off'; clearTimeout(to); rz.className='reflexzone'; rz.textContent='Trop tôt'; setTimeout(()=>cb(false),700); }
         else if(state==='go'){
           state='off';
           const ms=Math.round(performance.now()-t0);
@@ -1272,7 +1268,7 @@ const GEN = {
         const item=isGood?rnd(MIND_GOOD):rnd(MIND_BAD);
         $('fInstr').textContent='Manche '+round+'/3 — Cet aliment, pour votre cerveau ?';
         $('fStim').className='stim small'; $('fStim').innerHTML='<span style="font-size:52px">'+item[0]+'</span><br>'+item[1];
-        $('fOpts').innerHTML='<div class="btnrow"><button class="btn green" data-v="good">🧠 Bon allié</button><button class="btn" style="background:#F3D0C0;border-bottom-color:#DBA085;color:#7A3B1F" data-v="bad">⚠️ À limiter</button></div>';
+        $('fOpts').innerHTML='<div class="btnrow"><button class="btn green" data-v="good">Bon pour le cerveau</button><button class="btn" style="background:#F3D0C0;border-bottom-color:#DBA085;color:#7A3B1F" data-v="bad">À limiter</button></div>';
         $('fOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{
           const good=(b.dataset.v==='good')===isGood;
           if(good)ok++;
@@ -1293,7 +1289,7 @@ const GEN = {
         {q:'Le régime MIND combine…',a:'Méditerranéen + DASH',d:['Végan + paléo','Cétogène + jeûne','Sans gluten + cru']},
         {q:'Pour les noix, la bonne fréquence c\'est…',a:'Presque tous les jours',d:['Jamais','1 fois par mois','Uniquement en hiver']}]);
       $('fInstr').textContent=Q.q;
-      $('fStim').className='stim'; $('fStim').textContent='🥗';
+      $('fStim').className='stim'; $('fStim').textContent='';
       opts($('fOpts'),shuffle([Q.a,...Q.d]),Q.a,cb);
     }},
 
@@ -1305,7 +1301,7 @@ const GEN = {
       $('fInstr').innerHTML='';
       $('fStim').className='stim small';
       $('fStim').innerHTML='<span style="font-size:46px">'+p.em+'</span><br><span style="font-size:17px;font-family:\'Atkinson Hyperlegible\',sans-serif;font-weight:400"><b>'+p.t+'</b><br>'+p.instr+'<br><b style="color:#B03A36">Restez toujours près d\'un appui.</b></span>';
-      $('fOpts').innerHTML='<button class="btn primary" id="readyBtn">Je suis prêt·e ! 💪</button>';
+      $('fOpts').innerHTML='<button class="btn primary" id="readyBtn">Je suis prêt</button>';
       $('readyBtn').onclick=()=>{
         let t=p.dur;
         $('fStim').innerHTML='<div class="bigtimer" id="bigT">'+t+'</div>';
@@ -1314,9 +1310,9 @@ const GEN = {
         const iv=setInterval(()=>{
           t--;
           if(t<=0){ clearInterval(iv);
-            $('fStim').innerHTML='<span style="font-size:52px">⏰</span>';
+            $('fStim').innerHTML='<div class="bigtimer">0</div>';
             $('fInstr').textContent='Alors, comment ça s\'est passé ?';
-            $('fOpts').innerHTML='<button class="btn green mb" data-v="ok">J\'ai réussi ! 💪</button><button class="btn ghost" data-v="ko">Presque… je retenterai</button>';
+            $('fOpts').innerHTML='<button class="btn green mb" data-v="ok">J\'ai réussi</button><button class="btn ghost" data-v="ko">Presque… je retenterai</button>';
             $('fOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>cb(b.dataset.v==='ok'));
           } else $('bigT').textContent=t;
         },1000);
@@ -1327,9 +1323,9 @@ const GEN = {
 /* ═══════════════════ MOTEUR DE SÉANCE ═══════════════════ */
 let sessionLen=8;
 let feedIdx=0,feedPlan=[],feedOK=0,combo=0,sessionStartBA=0;
-const OK_MSGS=['Génial ! Vos neurones tissent de nouvelles connexions. <b>−0,1 an</b> ⚡','Bien joué ! Votre cortex préfrontal adore ça. <b>−0,1 an</b> ⚡','Parfait ! Votre réserve cognitive grandit. <b>−0,1 an</b> ⚡'];
-const COMBO_MSGS=['🔥 <b>Combo ×COMBO !</b> Vous êtes en feu ! <b>−0,1 an</b> + bonus ⚡','⚡ <b>Série de COMBO !</b> Votre cerveau turbine ! Bonus neurones !'];
-const KO_MSGS=['Pas grave du tout ! Le cerveau apprend <b>surtout</b> de ses erreurs. On continue !','Presque ! La difficulté, c\'est exactement ce qui muscle le cerveau. 💪','Chaque essai renforce le circuit, même celui-là. Courage !'];
+const OK_MSGS=['Réussi. Vos connexions se renforcent — <b>−0,1 an</b>.','Bien vu. Votre réserve cognitive progresse. <b>−0,1 an</b>.','Exact. La régularité paie. <b>−0,1 an</b>.'];
+const COMBO_MSGS=['<b>COMBO réussites d\'affilée.</b> Belle concentration — bonus neurones.','<b>Série de COMBO.</b> Votre attention est remarquable — bonus.'];
+const KO_MSGS=['Sans gravité : le cerveau apprend <b>surtout</b> de ses erreurs.','Presque. C\'est la difficulté qui fait travailler le circuit.','Chaque essai renforce le réseau, même celui-ci.'];
 
 function genWeight(key){
   const g=GEN[key], p=D.pillars[g.pillar];
@@ -1403,14 +1399,14 @@ function nextExercise(){
       const bonus=combo>=3?combo*2:0;
       D.brainAge=Math.round((D.brainAge-0.1)*10)/10;
       D.neurones+=10+bonus;
-      gainFx('+'+(10+bonus)+' ⚡');
+      gainFx('+'+(10+bonus));
       $('fFb').innerHTML = combo>=3 ? rnd(COMBO_MSGS).replace(/COMBO/g,combo) : rnd(OK_MSGS);
       setVix('vixFeed',combo>=4?'wow':'joy',true);
       el.classList.add('down');
     } else {
       combo=0;
       D.brainAge=Math.round((D.brainAge+0.05)*10)/10;
-      D.neurones+=2; gainFx('+2 ⚡');
+      D.neurones+=2; gainFx('+2');
       $('fFb').innerHTML=rnd(KO_MSGS);
       setVix('vixFeed','oops',true);
       el.classList.add('up');
@@ -1444,9 +1440,9 @@ function endSession(){
   /* série */
   $('endStreakTxt').textContent='🔥 Série : '+D.streak+' jour'+(D.streak>1?'s':'');
   $('endStreakSub').innerHTML = streakRes.bonus
-    ? 'Vous êtes revenu·e ! <b>+'+streakRes.bonus+' neurones bonus</b> 🎉'
-    : D.streak>=7 ? 'Une semaine complète — votre cerveau vous dit merci. 🙏'
-    : 'Revenez demain pour prolonger la série' + (D.streak===1?' — Vix vous prépare un <b>bonus de +50 neurones</b> !':' 🔥');
+    ? 'Vous êtes revenu. <b>+'+streakRes.bonus+' neurones bonus</b>.'
+    : D.streak>=7 ? 'Une semaine complète. Une régularité remarquable.'
+    : 'Revenez demain pour prolonger la série' + (D.streak===1?' — un <b>bonus de +50 neurones</b> vous attend.':'.');
   /* coffre du jour */
   const today=todayStr();
   $('endChestBtn').style.display = D.chestDay===today ? 'none' : 'block';
@@ -1461,13 +1457,13 @@ function openChest(){
   D.neurones+=win; save();
   $('endChestBtn').style.display='none';
   confetti();
-  showOvl('🎁','Coffre du jour !','Vix y avait caché <b>+'+win+' neurones ⚡</b><br>Un coffre neuf vous attend demain !','Merci Vix ! 🙌',()=>{ checkLevelUp(); });
+  showOvl('🎁','Coffre du jour !','Il contenait <b>+'+win+' neurones</b>.<br>Un nouveau coffre vous attend demain.','Continuer',()=>{ checkLevelUp(); });
 }
 
 /* ═══════════════════ CONFETTIS ═══════════════════ */
 function confetti(){
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const em=['🎉','⚡','✨','🧠','🌟','🎊'];
+  const em=['✦','●','✧'];
   for(let i=0;i<30;i++){
     const s=document.createElement('span');
     s.className='confetti'; s.textContent=rnd(em);
