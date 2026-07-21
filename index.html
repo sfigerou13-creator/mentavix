@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentavix — Votre coach cérébral</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fond:#FFF4E3; --carte:#FFFFFF;
+  --soleil:#FFC53D; --soleil2:#E8A400;
+  --corail:#FF8A5C; --corail2:#E06438;
+  --feuille:#3BA55D; --feuille2:#2C7F46;
+  --violet:#8B6FC9; --brique:#D9534F;
+  --encre:#41321F; --encre2:#7A6A54;
+  --lisere:#F0E4CE;
+  --r:24px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Atkinson Hyperlegible',sans-serif;
+  background:var(--fond); color:var(--encre);
+  display:flex;justify-content:center;
+  background-image:radial-gradient(circle at 15% 8%, #FFE3B3 0%, transparent 40%),
+                   radial-gradient(circle at 90% 92%, #FFD9C4 0%, transparent 45%);
+}
+#app{width:100%;max-width:460px;height:100dvh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.screen{display:none;flex:1;flex-direction:column;padding:22px;animation:fade .4s ease;overflow-y:auto;min-height:0}
+.screen.active{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+h1,h2,.disp{font-family:'Baloo 2',cursive}
+.eyebrow{font-family:'Baloo 2',cursive;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--corail2);font-weight:800;margin-bottom:8px}
+.sub{color:var(--encre2);font-size:17px;line-height:1.55}
+.center{text-align:center}.mt{margin-top:18px}.mb{margin-bottom:18px}.spacer{flex:1}
+
+/* ── boutons "bonbon" ── */
+.btn{
+  display:block;width:100%;min-height:64px;border:none;border-radius:20px;
+  font-family:'Baloo 2',cursive;font-size:20px;font-weight:800;letter-spacing:.02em;
+  cursor:pointer;padding:14px 20px;
+  color:#4A2E00;background:var(--soleil);
+  border-bottom:6px solid var(--soleil2);
+  transition:transform .08s, border-bottom-width .08s, filter .15s;
+}
+.btn:active{transform:translateY(4px);border-bottom-width:2px}
+.btn:focus-visible{outline:4px solid var(--violet);outline-offset:3px}
+.btn.primary{background:var(--corail);border-bottom-color:var(--corail2);color:#5A1F00}
+.btn.green{background:var(--feuille);border-bottom-color:var(--feuille2);color:#fff}
+.btn.ghost{background:#fff;border:2.5px solid #E8DCC8;border-bottom:6px solid #E8DCC8;color:var(--encre)}
+.btn.opt{
+  background:#fff;color:var(--encre);border:2.5px solid #E8DCC8;border-bottom:6px solid #E8DCC8;
+  margin-bottom:12px;font-family:'Atkinson Hyperlegible',sans-serif;font-size:19px;font-weight:700;
+}
+.btn.opt.correct{background:#E9F8EE;border-color:var(--feuille);border-bottom-color:var(--feuille2);color:var(--feuille2)}
+.btn.opt.wrong{background:#FDEEEA;border-color:var(--brique);border-bottom-color:#B03A36;color:#B03A36}
+.btn:disabled{opacity:.6;cursor:default}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ── mascotte Vix ── */
+.vix-wrap{display:flex;align-items:flex-end;gap:12px;margin:8px 0 16px}
+.vix{width:110px;flex-shrink:0;animation:float 3.2s ease-in-out infinite}
+.vix.small{width:74px}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.vix.bounce{animation:bounce .55s ease}
+@keyframes bounce{0%{transform:scale(1)}35%{transform:scale(1.15) rotate(-4deg)}70%{transform:scale(.96)}100%{transform:scale(1)}}
+.bubble{
+  position:relative;background:#fff;border:2.5px solid var(--lisere);border-radius:20px;
+  padding:14px 16px;font-size:16.5px;line-height:1.5;color:var(--encre);flex:1;
+  box-shadow:0 4px 0 var(--lisere);
+}
+.bubble::before{
+  content:'';position:absolute;left:-11px;bottom:20px;
+  width:18px;height:18px;background:#fff;border-left:2.5px solid var(--lisere);border-bottom:2.5px solid var(--lisere);
+  transform:rotate(45deg);border-radius:0 0 0 6px;
+}
+.bubble b{color:var(--corail2)}
+
+/* ── header séance ── */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#FFFDF8;border-bottom:3px solid var(--lisere);position:sticky;top:0;z-index:5}
+.stat{display:flex;align-items:center;gap:7px;font-family:'Baloo 2',cursive;font-weight:800;font-size:19px}
+.stat small{color:var(--encre2);font-weight:600;font-size:11px;display:block;letter-spacing:.06em;text-transform:uppercase;font-family:'Atkinson Hyperlegible',sans-serif}
+.age-live{font-size:26px;transition:color .3s}
+.age-live.down{color:var(--feuille)} .age-live.up{color:var(--brique)}
+.gain{position:absolute;font-family:'Baloo 2',cursive;font-weight:800;font-size:20px;color:var(--feuille);animation:rise 1.2s ease forwards;pointer-events:none;z-index:60}
+@keyframes rise{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(-46px)}}
+.flame{display:inline-block;animation:flick 1s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:scale(1)}50%{transform:scale(1.18) rotate(-3deg)}}
+
+/* ── niveau / XP ── */
+.lvlchip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2.5px solid var(--soleil);border-radius:999px;padding:6px 14px;font-family:'Baloo 2',cursive;font-weight:800;font-size:15px;box-shadow:0 3px 0 #EFD9A6}
+.xpwrap{margin:8px 0 2px}
+.xpbar{height:14px;background:#F3E8D3;border:2px solid #EBDCC0;border-radius:99px;overflow:hidden}
+.xpbar i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,var(--soleil),var(--corail));transition:width .8s ease}
+.xplbl{font-size:12.5px;color:var(--encre2);font-weight:700;margin-top:4px;text-align:right}
+
+/* ── cartes ── */
+.card{background:var(--carte);border:2.5px solid var(--lisere);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:0 5px 0 var(--lisere)}
+.sci{display:inline-block;font-size:13px;color:var(--encre2);background:#FFF7E8;border:2px solid var(--lisere);border-radius:999px;padding:5px 13px;margin-bottom:12px;font-weight:700}
+.stim{font-family:'Baloo 2',cursive;font-size:54px;font-weight:800;text-align:center;margin:24px 0;min-height:70px}
+.stim.small{font-size:29px;line-height:1.45}
+.progress-track{height:18px;background:#F3E8D3;border-radius:99px;margin:6px 0 16px;overflow:hidden;border:2px solid #EBDCC0}
+.progress-track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--soleil),var(--corail));transition:width .5s ease;width:0%}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0}
+.dot{aspect-ratio:1;border-radius:50%}
+.dot.b{background:#2E5EC4}.dot.r{background:#D9534F}
+.timerline{height:10px;background:#F3E8D3;border-radius:99px;margin:8px 0 18px;overflow:hidden;border:2px solid #EBDCC0}
+.timerline i{display:block;height:100%;background:var(--feuille);width:100%}
+.stroopword{font-family:'Baloo 2',cursive;font-size:60px;font-weight:800;text-align:center;margin:26px 0}
+.colorbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cbtn{min-height:74px;border-radius:20px;border:none;border-bottom:6px solid rgba(0,0,0,.25);cursor:pointer;font-size:0;transition:transform .08s}
+.cbtn:active{transform:translateY(4px);border-bottom-width:2px}
+.cbtn:focus-visible{outline:4px solid var(--encre)}
+
+/* ── grille Trail Making / empan ── */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.gcell{aspect-ratio:1;border-radius:20px;background:#fff;border:2.5px solid #E8DCC8;border-bottom:6px solid #E8DCC8;
+  font-family:'Baloo 2',cursive;font-size:32px;font-weight:800;color:var(--encre);cursor:pointer;transition:transform .08s}
+.gcell:active{transform:translateY(3px)}
+.gcell.done{background:#E9F8EE;border-color:var(--feuille);border-bottom-color:var(--feuille2);color:var(--feuille2)}
+.gcell.err{background:#FDEEEA;border-color:var(--brique);color:#B03A36}
+.digitpad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.digitpad .gcell{aspect-ratio:auto;min-height:66px}
+
+/* ── zone réflexe (PVT / Go-NoGo) ── */
+.reflexzone{min-height:190px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;
+  font-family:'Baloo 2',cursive;font-size:30px;font-weight:800;cursor:pointer;user-select:none;
+  border:3px dashed #E8DCC8;color:var(--encre2);margin:14px 0;transition:background .15s}
+.reflexzone.wait{background:#FDEEEA;border-color:var(--brique);color:#B03A36;border-style:solid}
+.reflexzone.go{background:#E9F8EE;border-color:var(--feuille);color:var(--feuille2);border-style:solid;font-size:38px}
+
+/* ── grand chrono équilibre ── */
+.bigtimer{font-family:'Baloo 2',cursive;font-size:84px;font-weight:800;text-align:center;color:var(--corail2);margin:10px 0}
+
+/* ── résultats & badges ── */
+.dial-wrap{margin:10px auto;position:relative;width:200px;height:200px}
+.dial-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.dial-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dial-num .big{font-family:'Baloo 2',cursive;font-size:52px;font-weight:800;line-height:1}
+.dial-num .lbl{font-size:12px;color:var(--encre2);letter-spacing:.1em;text-transform:uppercase;margin-top:4px;font-weight:700}
+.domrow{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.domrow .em{font-size:26px;width:34px}
+.domrow .name{width:118px;font-size:15px;font-weight:700}
+.domrow .bar{flex:1;height:16px;background:#F3E8D3;border-radius:99px;overflow:hidden;border:2px solid #EBDCC0}
+.domrow .bar i{display:block;height:100%;border-radius:99px;transition:width .7s ease;width:0%}
+.domrow .pct{width:46px;text-align:right;font-weight:700;font-size:15px}
+.domrow.faded{opacity:.55}
+.badge{display:flex;gap:14px;align-items:center;background:#FFF9EC;border:2.5px solid var(--soleil);border-radius:var(--r);padding:15px;margin-bottom:12px;box-shadow:0 4px 0 #EFD9A6;animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.8);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.badge .ic{font-size:34px}
+.badge b{display:block;font-size:17px;font-family:'Baloo 2',cursive}.badge small{color:var(--encre2)}
+.feedback-zone{display:flex;align-items:flex-end;gap:10px;min-height:96px;margin-top:8px}
+.feedback-zone .bubble{font-size:15.5px;padding:11px 14px}
+.feedback-zone .bubble::before{bottom:14px}
+.confetti{position:absolute;top:-12px;font-size:24px;animation:fall linear forwards;z-index:50;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(560deg);opacity:.2}}
+.pill{display:inline-flex;align-items:center;gap:7px;background:#fff;border:2px solid var(--lisere);border-radius:999px;padding:8px 15px;font-size:14.5px;font-weight:700;color:var(--encre2);margin:4px 4px 0 0}
+
+/* ── jardin cognitif ── */
+.plantrow{display:flex;align-items:center;gap:12px;margin-bottom:15px;cursor:pointer;border-radius:14px;padding:4px;transition:background .15s}
+.plantrow:active{background:#FFF7E8}
+.plantrow .chev{font-family:'Baloo 2',cursive;font-size:22px;color:var(--corail2);font-weight:800}
+.plantrow .plant{font-size:34px;width:44px;text-align:center;transition:filter .4s}
+.plantrow.wilt .plant{filter:grayscale(.75) opacity(.75)}
+.plantrow .pname{width:118px;font-size:15px;font-weight:700;line-height:1.2}
+.plantrow .pname small{display:block;font-weight:400;color:var(--encre2);font-size:12px}
+.plantrow .bar{flex:1;height:16px;background:#F3E8D3;border-radius:99px;overflow:hidden;border:2px solid #EBDCC0}
+.plantrow .bar i{display:block;height:100%;border-radius:99px;transition:width .7s ease}
+.curve{width:100%;height:120px;margin:4px 0 2px}
+.legend{font-size:12.5px;color:var(--encre2);font-weight:700;text-align:center;margin-bottom:6px}
+.disclaimer{font-size:12px;color:var(--encre2);text-align:center;margin-top:14px;line-height:1.5}
+.resetlink{background:none;border:none;color:var(--encre2);font-size:12px;text-decoration:underline;cursor:pointer;margin-top:10px;font-family:inherit}
+.evagrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.evagrid button{min-height:50px;border-radius:14px;border:2.5px solid #E8DCC8;border-bottom:5px solid #E8DCC8;background:#fff;font-family:'Baloo 2',cursive;font-size:19px;font-weight:800;color:var(--encre);cursor:pointer}
+.evagrid button.sel{background:var(--corail);border-color:var(--corail2);color:#fff}
+
+/* ── overlay (niveau / coffre) ── */
+#ovl{position:absolute;inset:0;background:rgba(65,50,31,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:26px;backdrop-filter:blur(2px)}
+#ovl.show{display:flex}
+.ovlcard{background:var(--fond);border:3px solid var(--soleil);border-radius:28px;padding:30px 24px;text-align:center;width:100%;max-width:360px;box-shadow:0 8px 0 var(--soleil2);animation:pop .5s ease}
+.ovlcard .huge{font-size:72px;margin:6px 0;display:inline-block}
+.ovlcard .huge.shake{animation:wobble .8s ease infinite}
+@keyframes wobble{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.rays{font-size:26px;letter-spacing:8px;color:var(--soleil2)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ══════ ACCUEIL (nouveau) ══════ -->
+<section class="screen active" id="s-home">
+  <h1 class="disp" style="font-size:38px;color:var(--corail2)">Mentavix</h1>
+  <div class="vix-wrap" style="margin-top:18px">
+    <div class="vix" id="vixHome"></div>
+    <div class="bubble">Bonjour, je suis <b>Vix</b> ! 👋<br>Votre coach cérébral personnel. Prêt à découvrir la forme de votre cerveau ? Promis, c'est amusant !</div>
+  </div>
+  <h2 style="font-size:27px;line-height:1.25;margin:10px 0 12px">Gardez un esprit affûté,<br>15 minutes par jour. 🌞</h2>
+  <p class="sub">Des mini-jeux issus de la recherche clinique, un âge cérébral à faire fondre, et des récompenses chaque jour.</p>
+  <div class="mt">
+    <span class="pill">🔬 Science validée</span>
+    <span class="pill">🎁 Récompenses</span>
+    <span class="pill">🔥 Défis quotidiens</span>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn primary" onclick="go('s-age')">C'est parti ! 🚀</button>
+  <p class="center sub mt" style="font-size:14px">Bilan gratuit · 3 minutes</p>
+</section>
+
+<!-- ══════ ÂGE ══════ -->
+<section class="screen" id="s-age">
+  <div class="eyebrow">Étape 1 · Faisons connaissance</div>
+  <div class="vix-wrap">
+    <div class="vix small" id="vixAge"></div>
+    <div class="bubble">Quel âge avez-vous ? J'en ai besoin pour calibrer vos tests — c'est notre point de départ scientifique. 🎯</div>
+  </div>
+  <div class="card center">
+    <div class="stepper" style="display:flex;align-items:center;gap:14px;justify-content:center;margin:10px 0">
+      <button onclick="stepAge(-1)" aria-label="Diminuer" style="width:70px;height:70px;border-radius:50%;border:none;background:var(--soleil);border-bottom:5px solid var(--soleil2);font-size:34px;font-family:'Baloo 2',cursive;font-weight:800;color:#4A2E00;cursor:pointer">−</button>
+      <div class="disp" id="ageVal" style="font-size:56px;font-weight:800;width:110px;text-align:center">65</div>
+      <button onclick="stepAge(1)" aria-label="Augmenter" style="width:70px;height:70px;border-radius:50%;border:none;background:var(--soleil);border-bottom:5px solid var(--soleil2);font-size:34px;font-family:'Baloo 2',cursive;font-weight:800;color:#4A2E00;cursor:pointer">+</button>
+    </div>
+    <p class="sub" style="font-size:15px">ans</p>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn primary" onclick="go('s-acou')">Continuer ➜</button>
+</section>
+
+<!-- ══════ ACOUPHÈNES ══════ -->
+<section class="screen" id="s-acou">
+  <div class="eyebrow">Étape 2 · Vos oreilles</div>
+  <div class="vix-wrap">
+    <div class="vix small" id="vixAcou"></div>
+    <div class="bubble" id="acouBubble">Dernière question : entendez-vous parfois des <b>sifflements ou bourdonnements</b> dans vos oreilles (des acouphènes) ?</div>
+  </div>
+  <div id="acouOpts">
+    <button class="btn opt" onclick="acouQ1(true)">Oui, régulièrement</button>
+    <button class="btn opt" onclick="acouQ1(true)">Parfois</button>
+    <button class="btn opt" onclick="acouQ1(false)">Non</button>
+  </div>
+  <div class="spacer"></div>
+  <p class="disclaimer">Cette question aide Vix à personnaliser votre accompagnement.</p>
+</section>
+
+<!-- ══════ TRANSITION ══════ -->
+<section class="screen" id="s-trans">
+  <div class="spacer"></div>
+  <div class="center"><div class="vix" id="vixTrans" style="margin:0 auto 18px"></div></div>
+  <p class="center disp" id="transTxt" style="font-size:23px">Préparation…</p>
+  <div class="spacer"></div>
+</section>
+
+<!-- ══════ TEST BILAN ══════ -->
+<section class="screen" id="s-test">
+  <div class="eyebrow" id="tEyebrow">Test 1/4</div>
+  <h2 id="tTitle" style="font-size:23px;margin-bottom:4px">Vitesse</h2>
+  <span class="sci" id="tSci">🔬</span>
+  <div class="timerline" id="tTimerWrap" style="display:none"><i id="tTimer"></i></div>
+  <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:center">
+    <p class="sub center" id="tInstr"></p>
+    <div id="tStim" class="stim"></div>
+    <div id="tOpts"></div>
+  </div>
+</section>
+
+<!-- ══════ RÉSULTATS BILAN ══════ -->
+<section class="screen" id="s-results">
+  <div class="eyebrow">Votre bilan cognitif</div>
+  <div class="vix-wrap">
+    <div class="vix small" id="vixRes"></div>
+    <div class="bubble" id="resBubble">Voici votre point de départ ! Chaque séance le fera baisser. ⬇️</div>
+  </div>
+  <div class="dial-wrap">
+    <svg viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="44" fill="none" stroke="#F0E4CE" stroke-width="8"/>
+      <circle id="resArc" cx="50" cy="50" r="44" fill="none" stroke="var(--corail)" stroke-width="8"
+        stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="276" style="transition:stroke-dashoffset 1.2s ease"/>
+    </svg>
+    <div class="dial-num"><div class="big" id="resAge">—</div><div class="lbl">Âge cérébral estimé</div></div>
+  </div>
+  <p class="center sub" style="font-size:13.5px;margin-bottom:16px">Estimation basée sur 4 tests cliniques — elle s'affinera sur 14 jours.</p>
+  <div class="card" id="domains"></div>
+  <div id="resBadge"></div>
+  <button class="btn primary mt" onclick="startFeed()">Commencer l'entraînement 🏋️</button>
+  <p class="disclaimer">Mentavix ne remplace pas un avis médical.</p>
+</section>
+
+<!-- ══════ JARDIN COGNITIF (accueil de retour) ══════ -->
+<section class="screen" id="s-garden" style="padding:0">
+  <div class="topbar">
+    <div class="stat"><span class="age-live" id="gAge">—</span><small>âge<br>cérébral</small></div>
+    <div class="stat">⚡ <span id="gNeur">0</span><small>neurones</small></div>
+    <div class="stat"><span class="flame">🔥</span> <span id="gStreak">0</span><small>série</small></div>
+  </div>
+  <div style="padding:16px 22px;flex:1;display:flex;flex-direction:column;overflow-y:auto">
+    <div class="vix-wrap" style="margin-top:4px">
+      <div class="vix small" id="vixGarden"></div>
+      <div class="bubble" id="gardenBubble">Content de vous revoir !</div>
+    </div>
+    <div class="center mb"><span class="lvlchip" id="gLvl">🌱 Niveau 1</span>
+      <div class="xpwrap"><div class="xpbar"><i id="gXp"></i></div><div class="xplbl" id="gXpLbl"></div></div>
+    </div>
+    <div class="card" style="padding:18px">
+      <p class="sub" style="font-weight:700;margin-bottom:4px">🌻 Votre jardin cognitif</p>
+      <p class="sub" style="font-size:13.5px;margin-bottom:12px">Touchez une plante pour <b>entraîner ce pilier</b> 💧</p>
+      <div id="gPlants"></div>
+    </div>
+    <div id="gExtras"></div>
+    <div class="card" style="padding:18px">
+      <p class="sub" style="font-weight:700;margin-bottom:6px">📉 Âge cérébral — 14 derniers jours</p>
+      <svg class="curve" id="gCurve" viewBox="0 0 300 100" preserveAspectRatio="none"></svg>
+      <p class="legend" id="gCurveLbl"></p>
+    </div>
+    <div id="gBadges"></div>
+    <button class="btn primary" onclick="startFeed()">Ma séance du jour ⚡</button>
+    <p class="disclaimer">Âge cérébral = estimation bien-être, pas un diagnostic.<br>Mentavix ne remplace pas un avis médical.</p>
+    <div class="center"><button class="resetlink" onclick="resetAll()">Réinitialiser mes données</button> · <button class="resetlink" onclick="showDerive('audition',true)">Démo : bilan de dérivation</button></div>
+  </div>
+</section>
+
+<!-- ══════ DÉRIVATION PRO ══════ -->
+<section class="screen" id="s-derive">
+  <div class="eyebrow">Bilan approfondi 🤝</div>
+  <div class="vix-wrap">
+    <div class="vix small" id="vixDer"></div>
+    <div class="bubble" id="derBubble"></div>
+  </div>
+  <div class="card" id="derSignals"></div>
+  <div class="card" id="derPro" style="border-color:var(--corail);box-shadow:0 4px 0 #F5C9B4"></div>
+  <div class="card" style="background:#FFF9EC">
+    <p class="sub" style="font-size:14px"><b>Votre consentement d'abord.</b> Mentavix ne transmet jamais vos coordonnées sans votre accord explicite. Ce bilan est une estimation bien-être, pas un diagnostic médical.</p>
+  </div>
+  <button class="btn primary mb" id="derYes">Oui, être mis en relation 🤝</button>
+  <button class="btn ghost" id="derNo">Non merci, je continue l'entraînement</button>
+  <p class="disclaimer">Mentavix ne remplace pas un avis médical.</p>
+</section>
+
+<!-- ══════ ESPACE ACOUPHÈNES ══════ -->
+<section class="screen" id="s-tinnitus">
+  <div class="eyebrow">Espace acouphènes 🎧</div>
+  <div class="vix-wrap">
+    <div class="vix small" id="vixTin"></div>
+    <div class="bubble">L'objectif n'est pas de lutter contre le bruit, mais d'apprendre au cerveau à <b>ne plus y prêter attention</b>. C'est l'habituation. 🔬 TRT (Jastreboff)</div>
+  </div>
+  <div class="card">
+    <p class="sub" style="font-weight:700;margin-bottom:6px">🔊 Thérapie sonore</p>
+    <p class="sub" style="font-size:14px;margin-bottom:12px">Un bruit doux, en fond, aide le cerveau à « classer sans suite » l'acouphène. À écouter quelques minutes, volume faible.</p>
+    <button class="btn green" id="tinPlayBtn" onclick="tinToggle()">▶️ Lancer le bruit apaisant</button>
+  </div>
+  <div class="card">
+    <p class="sub" style="font-weight:700;margin-bottom:6px">📏 Votre gêne aujourd'hui ?</p>
+    <p class="sub" style="font-size:14px;margin-bottom:10px">0 = aucune gêne · 10 = très gênant</p>
+    <div class="evagrid" id="evaGrid"></div>
+    <p class="sub center" id="evaMsg" style="font-size:14px;margin-top:10px;min-height:20px"></p>
+  </div>
+  <div class="card" id="tinConseil"></div>
+  <div class="card" id="tinDeriv" style="border-color:var(--corail);box-shadow:0 4px 0 #F5C9B4"></div>
+  <button class="btn ghost" onclick="tinBack()">← Retour au jardin</button>
+  <p class="disclaimer">Cet espace ne remplace pas un avis médical ou ORL.</p>
+</section>
+
+<!-- ══════ SÉANCE (feed) ══════ -->
+<section class="screen" id="s-feed" style="padding:0">
+  <div class="topbar">
+    <div class="stat"><span class="age-live" id="liveAge">—</span><small>âge<br>cérébral</small></div>
+    <div class="stat">⚡ <span id="liveNeur">0</span><small>neurones</small></div>
+    <div class="stat"><span class="flame">🔥</span> <span id="liveStreak">1</span><small>série</small></div>
+  </div>
+  <div style="padding:16px 22px;flex:1;display:flex;flex-direction:column">
+    <div class="progress-track"><i id="feedBar"></i></div>
+    <div class="eyebrow" id="fPillar">Pilier</div>
+    <span class="sci" id="fSci">🔬</span>
+    <div class="card" style="flex:1;display:flex;flex-direction:column;justify-content:center;margin-bottom:8px">
+      <p class="sub center" id="fInstr"></p>
+      <div id="fStim" class="stim"></div>
+      <div id="fOpts"></div>
+    </div>
+    <div class="feedback-zone">
+      <div class="vix small" id="vixFeed" style="width:64px;display:none"></div>
+      <div class="bubble" id="fFb" style="display:none"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ FIN DE SÉANCE ══════ -->
+<section class="screen" id="s-end">
+  <div class="spacer"></div>
+  <div class="center"><div class="vix" id="vixEnd" style="margin:0 auto;width:130px"></div></div>
+  <h2 class="center" style="font-size:30px;margin:10px 0 6px">Bravo ! 🎉</h2>
+  <p class="center sub mb" id="endSummary"></p>
+  <div class="card center" style="padding:16px">
+    <span class="disp" style="font-size:16px;color:var(--encre2)">Âge cérébral</span>
+    <div class="disp" id="endAge" style="font-size:48px;color:var(--feuille)">—</div>
+    <span class="disp" id="endDelta" style="font-size:17px;color:var(--feuille)"></span>
+  </div>
+  <div id="endBadges"></div>
+  <div class="card center" id="endStreakCard" style="border-color:var(--corail);box-shadow:0 4px 0 #F5C9B4">
+    <b class="disp" id="endStreakTxt" style="font-size:19px">🔥 Série : 1 jour</b>
+    <p class="sub" id="endStreakSub" style="font-size:15px;margin-top:6px"></p>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn green" id="endChestBtn" onclick="openChest()" style="display:none">🎁 Ouvrir le coffre du jour</button>
+  <button class="btn primary mt" onclick="startFeed()">Encore une séance ! ⚡</button>
+  <button class="btn ghost mt" onclick="showGarden()">Voir mon jardin cognitif 🌻</button>
+</section>
+
+<!-- ══════ OVERLAY (niveau / coffre) ══════ -->
+<div id="ovl" role="dialog" aria-modal="true">
+  <div class="ovlcard">
+    <div class="rays">✦ ✦ ✦</div>
+    <div class="huge" id="ovlEmoji">🎉</div>
+    <h2 class="disp" id="ovlTitle" style="font-size:27px;margin:4px 0">Niveau 2 !</h2>
+    <p class="sub" id="ovlSub" style="margin-bottom:18px"></p>
+    <button class="btn primary" onclick="closeOvl()" id="ovlBtn">Merci Vix ! 🙌</button>
+  </div>
+</div>
+
+</div>
+<script>
+/* ═══════════════════ MASCOTTE VIX ═══════════════════ */
+function vixSVG(mood){
+  const eyes = {
+    happy:'<circle cx="44" cy="58" r="6.5" fill="#41321F"/><circle cx="76" cy="58" r="6.5" fill="#41321F"/><circle cx="46.5" cy="55.5" r="2.2" fill="#fff"/><circle cx="78.5" cy="55.5" r="2.2" fill="#fff"/>',
+    joy:'<path d="M36 58 Q44 49 52 58" stroke="#41321F" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M68 58 Q76 49 84 58" stroke="#41321F" stroke-width="5" fill="none" stroke-linecap="round"/>',
+    oops:'<circle cx="44" cy="59" r="5.5" fill="#41321F"/><circle cx="76" cy="59" r="5.5" fill="#41321F"/><path d="M36 48 Q44 44 52 48" stroke="#41321F" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M68 48 Q76 44 84 48" stroke="#41321F" stroke-width="4" fill="none" stroke-linecap="round"/>',
+    think:'<circle cx="44" cy="58" r="6" fill="#41321F"/><circle cx="76" cy="58" r="6" fill="#41321F"/><circle cx="47" cy="55" r="2" fill="#fff"/><circle cx="79" cy="55" r="2" fill="#fff"/>',
+    wow:'<circle cx="44" cy="58" r="8" fill="#41321F"/><circle cx="76" cy="58" r="8" fill="#41321F"/><circle cx="47" cy="54.5" r="3" fill="#fff"/><circle cx="79" cy="54.5" r="3" fill="#fff"/>'
+  }[mood];
+  const mouth = {
+    happy:'<path d="M46 76 Q60 88 74 76" stroke="#41321F" stroke-width="5" fill="none" stroke-linecap="round"/>',
+    joy:'<path d="M44 74 Q60 94 76 74 Z" fill="#41321F"/><path d="M50 82 Q60 88 70 82 Q60 92 50 82Z" fill="#FF8A5C"/>',
+    oops:'<path d="M50 80 Q60 85 70 80" stroke="#41321F" stroke-width="5" fill="none" stroke-linecap="round"/>',
+    think:'<circle cx="60" cy="80" r="6" fill="#41321F"/>',
+    wow:'<ellipse cx="60" cy="80" rx="8" ry="10" fill="#41321F"/>'
+  }[mood];
+  const extra = mood==='joy' ? '<text x="8" y="30" font-size="18">✨</text><text x="94" y="26" font-size="18">✨</text>'
+              : mood==='wow' ? '<text x="6" y="34" font-size="20">⭐</text><text x="96" y="28" font-size="20">⭐</text>' : '';
+  return `<svg viewBox="0 0 120 120" role="img" aria-label="Vix, la mascotte">
+    <ellipse cx="60" cy="112" rx="30" ry="6" fill="#00000012"/>
+    <ellipse cx="60" cy="66" rx="45" ry="43" fill="#FF9E7D"/>
+    <path d="M25 52 Q22 34 38 30 Q40 16 57 20 Q66 8 78 18 Q94 14 95 32 Q106 40 96 54 Q94 60 88 58 Q80 46 70 50 Q58 40 48 50 Q36 44 30 56 Q26 58 25 52Z" fill="#FF8264"/>
+    <path d="M42 34 Q50 28 56 34 M62 28 Q70 24 76 32 M82 40 Q88 38 90 44" stroke="#E06438" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <circle cx="34" cy="72" r="7" fill="#FFC4A8"/>
+    <circle cx="86" cy="72" r="7" fill="#FFC4A8"/>
+    ${eyes}${mouth}${extra}
+  </svg>`;
+}
+function setVix(id, mood, bounce){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = vixSVG(mood);
+  if(bounce){ el.classList.remove('bounce'); void el.offsetWidth; el.classList.add('bounce'); }
+}
+['vixHome','vixAge','vixTrans','vixRes','vixEnd','vixGarden','vixAcou','vixTin','vixDer'].forEach(i=>setVix(i,'happy'));
+
+/* ═══════════════════ OUTILS ═══════════════════ */
+const $ = id => document.getElementById(id);
+function go(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function shuffle(a){ return a.sort(()=>Math.random()-.5); }
+function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
+function todayStr(d){ const x=d||new Date(); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
+function daysBetween(d1,d2){ return Math.round((new Date(d2)-new Date(d1))/86400000); }
+
+/* ═══════════════ ÉTAT PERSISTANT (localStorage) ═══════════════ */
+const KEY='mentavix_v3';
+const PILLARS = {
+  audition:  {em:'👂', name:'Audition',        plant:'🌻', sci:'🔬 Chiffres dans le bruit — DIN (Smits, 2013)'},
+  inhibition:{em:'🎨', name:'Inhibition',      plant:'🌷', sci:'🔬 Test de Stroop (1935)'},
+  memoire:   {em:'🧩', name:'Mémoire',          plant:'🌸', sci:'🔬 N-Back (Jaeggi, 2008)'},
+  vitesse:   {em:'⚡', name:'Vitesse',          plant:'🌼', sci:'🔬 Batterie MoCA / WAIS-IV'},
+  vigilance: {em:'👀', name:'Vigilance',        plant:'🌺', sci:'🔬 PVT (Basner & Dinges, 2011)'},
+  nutrition: {em:'🥗', name:'Nutrition',        plant:'🌿', sci:'🔬 Régime MIND (Morris, 2015)'},
+  corps:     {em:'🤸', name:'Équilibre',        plant:'🌱', sci:'🔬 SPPB (Guralnik, 1994)'}
+};
+const BADGES = {
+  bilan:      {ic:'🧠', t:'Bilan complété !',      s:'+30 neurones · Votre profil est créé'},
+  premiere:   {ic:'🎈', t:'Première séance !',     s:'Votre entraînement quotidien est lancé'},
+  sansfaute:  {ic:'🏆', t:'Sans faute !',          s:'Séance parfaite — esprit remarquablement affûté'},
+  espritvif:  {ic:'⭐', t:'Esprit vif',            s:'Plus de 65 % de réussite dans une séance'},
+  jour2:      {ic:'🌅', t:'Le retour !',           s:'2 jours de suite · +50 neurones bonus'},
+  regularite: {ic:'📅', t:'Régularité',            s:'3 jours de série — l\'habitude s\'installe'},
+  semainefeu: {ic:'🔥', t:'Semaine de feu',        s:'7 jours de série — votre cerveau vous dit merci'},
+  jardinier:  {ic:'🌻', t:'Jardinier cérébral',    s:'Les 7 piliers travaillés au moins une fois'},
+  auditionor: {ic:'👂', t:'Oreille d\'or',         s:'5 réussites au test d\'audition dans le bruit'},
+  centexos:   {ic:'💯', t:'Centurion',             s:'100 exercices réalisés au total'}
+};
+const LEVELS = [
+  {xp:0,    t:'Jeune Pousse',      em:'🌱'},
+  {xp:100,  t:'Esprit Curieux',    em:'🔍'},
+  {xp:250,  t:'Neurone Éveillé',   em:'⚡'},
+  {xp:500,  t:'Cortex Actif',      em:'🧠'},
+  {xp:900,  t:'Mémoire d\'Éléphant',em:'🐘'},
+  {xp:1400, t:'Cerveau Agile',     em:'🤸'},
+  {xp:2000, t:'Esprit d\'Acier',   em:'🛡️'},
+  {xp:2800, t:'Sage Alerte',       em:'🦉'},
+  {xp:3800, t:'Maître Synapse',    em:'🎓'},
+  {xp:5000, t:'Légende Cérébrale', em:'👑'}
+];
+function freshState(){
+  const p={};
+  Object.keys(PILLARS).forEach(k=>p[k]={score:60,last:null,ok:0,tries:0});
+  return { age:65, brainAge:null, startBrainAge:null, neurones:0, badges:[],
+    streak:0, bestStreak:0, lastDay:null, sessions:0, totalExos:0,
+    history:[], pillars:p, chestDay:null, recent:[],
+    derivedAsked:[], derivations:[],
+    tinnitus:{has:false,origin:null,eva:[]} };
+}
+let D = freshState();
+function load(){
+  try{ const raw=localStorage.getItem(KEY); if(raw){ const j=JSON.parse(raw); D=Object.assign(freshState(),j); D.pillars=Object.assign(freshState().pillars,j.pillars||{}); } }
+  catch(e){ D=freshState(); }
+}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(D)); }catch(e){} }
+function resetAll(){
+  if(confirm('Effacer toutes vos données Mentavix ? (âge cérébral, neurones, série, badges)')){
+    localStorage.removeItem(KEY); location.reload();
+  }
+}
+function levelInfo(){
+  let li=0; LEVELS.forEach((l,i)=>{ if(D.neurones>=l.xp) li=i; });
+  const cur=LEVELS[li], next=LEVELS[li+1]||null;
+  return {n:li+1, cur, next, pct: next? Math.min(100,Math.round((D.neurones-cur.xp)/(next.xp-cur.xp)*100)) : 100};
+}
+function hasBadge(id){ return D.badges.includes(id); }
+function grantBadge(id,where){
+  if(hasBadge(id)) return false;
+  D.badges.push(id); save();
+  const b=BADGES[id];
+  if(where) addBadge(where,b.ic,b.t,b.s);
+  return true;
+}
+function addBadge(where,ic,title,sub){
+  $(where).insertAdjacentHTML('beforeend',
+    `<div class="badge"><span class="ic">${ic}</span><div><b>${title}</b><small>${sub}</small></div></div>`);
+}
+
+/* ═══════════════ OVERLAY (niveau / coffre) ═══════════════ */
+let ovlCb=null;
+function showOvl(emoji,title,sub,btn,cb,shake){
+  $('ovlEmoji').textContent=emoji;
+  $('ovlEmoji').classList.toggle('shake',!!shake);
+  $('ovlTitle').textContent=title;
+  $('ovlSub').innerHTML=sub;
+  $('ovlBtn').textContent=btn||'Merci Vix ! 🙌';
+  ovlCb=cb||null;
+  $('ovl').classList.add('show');
+}
+function closeOvl(){ $('ovl').classList.remove('show'); if(ovlCb){ const f=ovlCb; ovlCb=null; f(); } }
+let lastLevel=1;
+function checkLevelUp(){
+  const li=levelInfo();
+  if(li.n>lastLevel){
+    lastLevel=li.n;
+    confetti();
+    showOvl(li.cur.em,'Niveau '+li.n+' !','Vous êtes désormais <b>'+li.cur.t+'</b> '+li.cur.em+'<br>Vix est très fier de vous.','Continuer 🙌');
+  }
+}
+/* ═══════════════════ BILAN INITIAL (4 tests cliniques) ═══════════════════ */
+let bilanScores = {};
+function stepAge(d){ D.age=Math.min(99,Math.max(40,D.age+d)); $('ageVal').textContent=D.age; }
+function startBilan(){ D.brainAge=D.age; transition('Test 1 · Vitesse ⚡','think',runVitesse); }
+function transition(txt, mood, next){
+  $('transTxt').textContent=txt; setVix('vixTrans',mood);
+  go('s-trans'); setTimeout(next,1100);
+}
+function setupTest(n,title,sci,instr){
+  $('tEyebrow').textContent=`Bilan · Test ${n}/4`;
+  $('tTitle').textContent=title; $('tSci').textContent=sci; $('tInstr').textContent=instr;
+  $('tStim').innerHTML=''; $('tOpts').innerHTML=''; $('tStim').className='stim';
+  go('s-test');
+}
+function opts(el,arr,correct,cb,delay=900){
+  el.innerHTML=arr.map(o=>`<button class="btn opt" data-v="${o}">${o}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const good=b.dataset.v===correct;
+    b.classList.add(good?'correct':'wrong');
+    if(!good) el.querySelector(`[data-v="${correct}"]`)?.classList.add('correct');
+    el.querySelectorAll('button').forEach(x=>x.disabled=true);
+    setTimeout(()=>cb(good),delay);
+  });
+}
+
+/* Test 1 : Vitesse (3 manches, chrono ms) */
+function runVitesse(){
+  setupTest(1,'Vitesse ⚡','🔬 Vitesse de traitement (batterie MoCA)','Touchez le chiffre affiché, le plus vite possible !');
+  let round=0,times=[];
+  function next(){
+    if(round===3){
+      const avg=times.reduce((a,b)=>a+b,0)/3;
+      bilanScores.vitesse = avg<1600;
+      D.pillars.vitesse.score=Math.max(30,Math.min(98,Math.round(100-(avg-500)/25)));
+      transition('Test 2 · Couleurs piégées 🎨','think',runStroopBilan); return;
+    }
+    round++;
+    const target=Math.floor(Math.random()*9)+1;
+    $('tStim').textContent=target;
+    const o=shuffle([target,...shuffle([1,2,3,4,5,6,7,8,9].filter(x=>x!==target)).slice(0,3)]);
+    const t0=performance.now();
+    opts($('tOpts'), o.map(String), String(target), g=>{ times.push(g?performance.now()-t0:3000); next(); }, 400);
+  }
+  next();
+}
+
+/* Stroop partagé (bilan + feed) */
+const COLORS={ROUGE:'#D9534F',BLEU:'#2E5EC4',VERT:'#2C8F52',JAUNE:'#D19000'};
+function stroopRound(container,stimEl,onAnswer){
+  const words=Object.keys(COLORS);
+  const word=rnd(words), ink=rnd(words.filter(w=>w!==word));
+  stimEl.innerHTML=`<div class="stroopword" style="color:${COLORS[ink]}">${word}</div>`;
+  container.innerHTML=`<p class="sub center" style="margin-bottom:12px">Touchez la couleur de <b>l'encre</b> (pas le mot !)</p>
+    <div class="colorbtns">${shuffle(words.slice()).map(w=>
+      `<button class="cbtn" style="background:${COLORS[w]}" data-v="${w}" aria-label="${w}"></button>`).join('')}</div>`;
+  container.querySelectorAll('.cbtn').forEach(b=>b.onclick=()=>{
+    const g=b.dataset.v===ink;
+    b.style.outline=g?'5px solid #2C8F52':'5px solid #B03A36';
+    onAnswer(g);
+  });
+}
+function runStroopBilan(){
+  setupTest(2,'Couleurs piégées 🎨','🔬 Test de Stroop (1935)','');
+  let round=0,ok=0;
+  function next(){
+    if(round===3){
+      bilanScores.inhibition=ok>=2; D.pillars.inhibition.score=Math.round((ok/3)*100);
+      transition('Test 3 · Mémoire 🧩','think',runMemoire); return;
+    }
+    round++;
+    stroopRound($('tOpts'),$('tStim'),g=>{ if(g)ok++; setTimeout(next,500); });
+  }
+  next();
+}
+
+/* Test 3 : Mémoire — 3 mots, timer clinique 4,5 s (MMSE) */
+const WORDBANK=[['CITRON','FORÊT','PIANO'],['MOULIN','ORAGE','VELOURS'],['PHARE','CERISE','MARBRE'],
+  ['SABLE','TROMPETTE','GLACIER'],['MIEL','FALAISE','TAMBOUR'],['CUIVRE','PRAIRIE','NAVIRE'],
+  ['PERLE','GRANGE','SENTIER'],['CANARD','MISTRAL','ARDOISE']];
+function runMemoire(){
+  setupTest(3,'Mémoire 🧩','🔬 Rappel de mots (MMSE, Folstein 1975)','Mémorisez ces 3 mots… ils vont disparaître !');
+  const words=rnd(WORDBANK);
+  $('tStim').className='stim small'; $('tStim').innerHTML=words.join('<br>');
+  $('tTimerWrap').style.display='block';
+  const bar=$('tTimer'); bar.style.transition='none'; bar.style.width='100%';
+  requestAnimationFrame(()=>{ bar.style.transition='width 4.5s linear'; bar.style.width='0%'; });
+  setTimeout(()=>{
+    $('tTimerWrap').style.display='none'; $('tStim').innerHTML='';
+    $('tInstr').textContent='Quel mot était au milieu de la liste ?';
+    opts($('tOpts'), shuffle([words[1],rnd(['TULIPE','CARTON','SIROP']),words[0],words[2]]), words[1], g=>{
+      bilanScores.memoire=g; if(!g) D.pillars.memoire.score=52;
+      transition('Test 4 · Le défi N-Back 🔁','think',runNback);
+    });
+  },4700);
+}
+
+/* Test 4 : N-Back — 2 s/lettre (Jaeggi) */
+function runNback(){
+  setupTest(4,'Le défi N-Back 🔁','🔬 N-Back (Jaeggi et al., 2008)','Observez bien la séquence…');
+  const match=Math.random()<.5;
+  const L=['K','R','M','T','B','J'];
+  const l1=rnd(L),l2=rnd(L.filter(x=>x!==l1));
+  const seq=[l1,l2,match?l1:rnd(L.filter(x=>x!==l1&&x!==l2))];
+  let i=0;
+  const show=()=>{
+    if(i<seq.length){
+      $('tStim').textContent=seq[i]; i++;
+      setTimeout(()=>{ $('tStim').textContent=''; setTimeout(show,300); },1700);
+    } else {
+      $('tInstr').textContent='La dernière lettre était-elle identique à celle vue 2 positions avant ?';
+      opts($('tOpts'),['OUI','NON'], match?'OUI':'NON', g=>{
+        bilanScores.travail=g;
+        const m=D.pillars.memoire;
+        m.score = Math.round(((bilanScores.memoire?88:52)+(g?85:50))/2);
+        showResults();
+      });
+    }
+  };
+  show();
+}
+
+/* Résultats du bilan — pondérations cliniques */
+function showResults(){
+  let ba=D.age;
+  ba+=bilanScores.vitesse?-0.3:1.5;
+  ba+=bilanScores.inhibition?-0.5:3.0;   /* Stroop = marqueur le plus prédictif */
+  ba+=bilanScores.memoire?-0.4:2.5;
+  ba+=bilanScores.travail?-0.3:2.0;
+  D.brainAge=Math.max(D.age-2,Math.round(ba*10)/10);
+  D.startBrainAge=D.brainAge;
+  D.history=[{d:todayStr(),ba:D.brainAge}];
+  $('resAge').textContent=D.brainAge.toFixed(1);
+  const better=D.brainAge<=D.age;
+  $('resAge').style.color=better?'var(--feuille)':'var(--brique)';
+  setVix('vixRes', better?'joy':'happy');
+  $('resBubble').innerHTML = better
+    ? 'Impressionnant ! Votre cerveau est <b>plus jeune que vous</b>. Entretenons ça ! 💪'
+    : `Votre cerveau a <b>${(D.brainAge-D.age).toFixed(1)} an(s) d'avance</b> sur vous… Bonne nouvelle : chaque séance le rajeunit. On s'y met ? 💪`;
+  const measured=['vitesse','inhibition','memoire'];
+  $('domains').innerHTML='<p class="sub" style="margin-bottom:14px;font-weight:700">Votre réserve cognitive :</p>'+
+    Object.keys(PILLARS).map(k=>{
+      const P=PILLARS[k], v=D.pillars[k].score;
+      if(measured.includes(k)){
+        const c=v>=75?'var(--feuille)':v>=55?'var(--soleil)':'var(--brique)';
+        return `<div class="domrow"><span class="em">${P.em}</span><span class="name">${P.name}</span>
+          <div class="bar"><i style="background:${c}" data-w="${v}"></i></div><span class="pct">${v}%</span></div>`;
+      }
+      return `<div class="domrow faded"><span class="em">${P.em}</span><span class="name">${P.name}</span>
+        <div class="bar"><i style="background:#D8CBB2" data-w="15"></i></div><span class="pct" style="font-size:12px">à explorer</span></div>`;
+    }).join('');
+  grantBadge('bilan','resBadge');
+  D.neurones+=30; save();
+  go('s-results');
+  requestAnimationFrame(()=>{
+    $('resArc').style.strokeDashoffset=276-276*Math.min(1,(120-D.brainAge)/80);
+    document.querySelectorAll('#domains .bar i').forEach(b=>b.style.width=b.dataset.w+'%');
+  });
+}
+
+/* ═══════════════════ SÉRIE 🔥 RÉELLE (dates) ═══════════════════ */
+function updateStreak(){
+  const today=todayStr();
+  const res={counted:false,bonus:0,newBadges:[]};
+  if(D.lastDay===today) return res;          /* déjà compté aujourd'hui */
+  if(D.lastDay && daysBetween(D.lastDay,today)===1) D.streak++;
+  else D.streak=1;
+  D.lastDay=today;
+  D.bestStreak=Math.max(D.bestStreak,D.streak);
+  res.counted=true;
+  if(D.streak===2 && !hasBadge('jour2')){ res.bonus=50; D.neurones+=50; grantBadge('jour2'); res.newBadges.push('jour2'); }
+  if(D.streak>=3 && !hasBadge('regularite')){ grantBadge('regularite'); res.newBadges.push('regularite'); }
+  if(D.streak>=7 && !hasBadge('semainefeu')){ grantBadge('semainefeu'); res.newBadges.push('semainefeu'); }
+  save();
+  return res;
+}
+function pushHistory(){
+  const today=todayStr();
+  const last=D.history[D.history.length-1];
+  if(last && last.d===today) last.ba=D.brainAge;
+  else D.history.push({d:today,ba:D.brainAge});
+  if(D.history.length>60) D.history=D.history.slice(-60);
+  save();
+}
+
+/* ═══════════════════ JARDIN COGNITIF ═══════════════════ */
+function wiltDays(k){
+  const last=D.pillars[k].last;
+  if(!last) return 99;
+  return daysBetween(last,todayStr());
+}
+function showGarden(){
+  const li=levelInfo(); lastLevel=li.n;
+  $('gAge').textContent=D.brainAge!=null?D.brainAge.toFixed(1):'—';
+  $('gNeur').textContent=D.neurones;
+  $('gStreak').textContent=D.streak;
+  $('gLvl').textContent=li.cur.em+' Niveau '+li.n+' · '+li.cur.t;
+  $('gXp').style.width=li.pct+'%';
+  $('gXpLbl').textContent= li.next ? (D.neurones+' / '+li.next.xp+' ⚡ vers « '+li.next.t+' »') : 'Niveau maximum atteint ! 👑';
+  /* plantes */
+  $('gPlants').innerHTML=Object.keys(PILLARS).map(k=>{
+    const P=PILLARS[k], pi=D.pillars[k], v=pi.score, wd=wiltDays(k);
+    const wilt = wd>=4;
+    const never = !pi.last;
+    const c=v>=75?'var(--feuille)':v>=55?'var(--soleil)':'var(--brique)';
+    const note = never ? 'jamais exploré' : wilt ? 'a soif ! ('+wd+' j sans exercice)' : wd===0 ? 'arrosé aujourd\'hui 💧' : 'en forme';
+    return `<div class="plantrow ${wilt?'wilt':''}" onclick="startFeed('${k}')" role="button" tabindex="0" aria-label="Entraîner le pilier ${P.name}">
+      <span class="plant">${wilt?'🥀':P.plant}</span>
+      <span class="pname">${P.em} ${P.name}<small>${note}</small></span>
+      <div class="bar"><i style="background:${never?'#D8CBB2':c};width:${never?15:v}%"></i></div>
+      <span class="chev">›</span>
+    </div>`;
+  }).join('');
+  /* bulle de Vix selon l'état du jardin */
+  const thirsty=Object.keys(PILLARS).filter(k=>D.pillars[k].last && wiltDays(k)>=4);
+  const doneToday=D.lastDay===todayStr();
+  setVix('vixGarden', doneToday?'joy':'happy');
+  $('gardenBubble').innerHTML = doneToday
+    ? 'Séance du jour <b>accomplie</b> ! Revenez demain pour prolonger votre série 🔥'
+    : thirsty.length ? 'Votre <b>'+PILLARS[thirsty[0]].name.toLowerCase()+'</b> a un peu soif… une petite séance pour l\'arroser ? 💧'
+    : D.streak>0 ? 'Série de <b>'+D.streak+' jour'+(D.streak>1?'s':'')+'</b> 🔥 — on la prolonge aujourd\'hui ?'
+    : 'Content de vous revoir ! Votre cerveau aussi. 😊';
+  /* cartes dérivation, corps & acouphènes */
+  $('gExtras').innerHTML=deriveCardHTML()+
+    '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">💪 Anti-sarcopénie</p>'+
+    '<p class="sub" style="font-size:14px;margin-bottom:12px">Le muscle protège le cerveau (Commission Lancet 2020). 4 exercices doux et guidés, 3 minutes.</p>'+
+    '<button class="btn green" onclick="startFeed(\'corps\')">Séance corps guidée 🤸</button></div>'+
+    (D.tinnitus.has
+      ? '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">🎧 Vos acouphènes</p>'+
+        '<p class="sub" style="font-size:14px;margin-bottom:12px">Thérapie sonore, suivi de gêne et conseils d\'habituation (TRT).</p>'+
+        '<button class="btn" onclick="showTinnitus()">Ouvrir l\'espace acouphènes 🎧</button></div>'
+      : '');
+  /* courbe 14 jours */
+  drawCurve();
+  /* badges gagnés */
+  $('gBadges').innerHTML='';
+  if(D.badges.length){
+    $('gBadges').innerHTML='<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:10px">🏅 Vos badges ('+D.badges.length+'/'+Object.keys(BADGES).length+')</p>'+
+      D.badges.map(id=>{const b=BADGES[id];return '<span class="pill" title="'+b.s+'">'+b.ic+' '+b.t+'</span>';}).join('')+'</div>';
+  }
+  go('s-garden');
+}
+function drawCurve(){
+  const svg=$('gCurve');
+  const pts=D.history.slice(-14);
+  if(pts.length<2){
+    svg.innerHTML='<text x="150" y="55" text-anchor="middle" font-size="13" fill="#7A6A54" font-family="Atkinson Hyperlegible">Revenez demain pour voir votre courbe se dessiner ✏️</text>';
+    $('gCurveLbl').textContent='Premier point enregistré : '+(pts[0]?pts[0].ba.toFixed(1)+' ans':'—');
+    return;
+  }
+  const vals=pts.map(p=>p.ba);
+  const min=Math.min(...vals)-0.5, max=Math.max(...vals)+0.5;
+  const X=i=>10+(i/(pts.length-1))*280;
+  const Y=v=>90-((v-min)/(max-min))*75;
+  const path=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.ba).toFixed(1)).join(' ');
+  const area=path+' L'+X(pts.length-1).toFixed(1)+' 95 L10 95 Z';
+  svg.innerHTML=
+    '<path d="'+area+'" fill="#3BA55D22"/>'+
+    '<path d="'+path+'" fill="none" stroke="#3BA55D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+
+    pts.map((p,i)=>'<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(p.ba).toFixed(1)+'" r="4" fill="#2C7F46"/>').join('');
+  const delta=(pts[pts.length-1].ba-pts[0].ba);
+  $('gCurveLbl').textContent = delta<0
+    ? '−'+Math.abs(delta).toFixed(1)+' an'+(Math.abs(delta)>=2?'s':'')+' sur la période — beau travail ! 🎉'
+    : delta===0 ? 'Stable — la régularité va payer !' : '+'+delta.toFixed(1)+' an — une séance aujourd\'hui pour inverser la tendance ?';
+}
+/* ═══════════════ DÉRIVATION PRO (règle du brief : jamais de spam) ═══════════════ */
+const PROS={
+  audition:  {spec:'Audioprothésiste',note:'Bilan auditif complet, gratuit et sans engagement. Une audition bien corrigée réduit la charge cognitive (F. Lin, Johns Hopkins).'},
+  inhibition:{spec:'Orthophoniste',note:'Rééducation des fonctions exécutives, sur prescription médicale. Le Stroop est son outil quotidien.'},
+  memoire:   {spec:'Orthophoniste',note:'Bilan mémoire et rééducation personnalisée, sur prescription médicale.'},
+  vitesse:   {spec:'Consultation mémoire',note:'Un bilan neuropsychologique complet permet d\'y voir clair, sereinement.'},
+  vigilance: {spec:'Médecin du sommeil',note:'Une vigilance en baisse cache souvent un sommeil perturbé — ça se traite très bien.'},
+  nutrition: {spec:'Nutritionniste',note:'Un accompagnement MIND personnalisé, adapté à vos habitudes et vos goûts.'},
+  corps:     {spec:'Kinésithérapeute',note:'Renforcement doux et équilibre, adapté à votre condition. Le muscle protège le cerveau.'}
+};
+function deriveCandidates(){
+  /* Conditions du brief : ≥5 exercices du pilier + seuil franchi + tendance en baisse + jamais déjà proposé */
+  return Object.keys(PILLARS).filter(k=>{
+    const p=D.pillars[k];
+    if((D.derivedAsked||[]).includes(k)) return false;
+    if(p.tries<5 || p.score>=50) return false;
+    const h=p.hist||[]; if(h.length<2) return false;
+    const old=h[Math.max(0,h.length-8)].score;
+    return p.score<=old;
+  });
+}
+function deriveCardHTML(){
+  const c=deriveCandidates();
+  if(!c.length) return '';
+  const k=c[0],Pp=PILLARS[k];
+  return '<div class="card" style="padding:18px;border-color:var(--violet);box-shadow:0 4px 0 #D8CCF0">'+
+    '<p class="sub" style="font-weight:700;margin-bottom:4px">🤝 Un coup de pouce ?</p>'+
+    '<p class="sub" style="font-size:14px;margin-bottom:12px">Vix a remarqué que votre pilier <b>'+Pp.name+'</b> stagne malgré vos efforts. Un professionnel pourrait vous aider — seulement si vous le souhaitez.</p>'+
+    '<button class="btn" style="background:var(--violet);border-bottom-color:#6E54A8;color:#fff" onclick="showDerive(\''+k+'\')">Voir le bilan '+Pp.em+'</button></div>';
+}
+function showDerive(k,demo){
+  const Pp=PILLARS[k], p=D.pillars[k], pro=PROS[k];
+  setVix('vixDer','think');
+  $('derBubble').innerHTML='Vous vous entraînez sérieusement — c\'est tout à votre honneur. Sur le pilier <b>'+Pp.name+'</b>, un accompagnement humain ferait la différence. Regardez :';
+  const score=demo?42:p.score, tries=demo?9:p.tries;
+  $('derSignals').innerHTML='<p class="sub" style="font-weight:700;margin-bottom:12px">📋 Les signaux observés</p>'+
+    '<div class="domrow"><span class="em">'+Pp.em+'</span><span class="name">Score actuel</span><div class="bar"><i style="background:var(--brique);width:'+score+'%"></i></div><span class="pct">'+score+'%</span></div>'+
+    '<p class="sub" style="font-size:14px">'+tries+' exercices réalisés sur ce pilier · tendance en légère baisse sur 14 jours · seuil d\'attention franchi'+(demo?' <b>(démonstration)</b>':'')+'</p>';
+  $('derPro').innerHTML='<p class="sub" style="font-weight:700;margin-bottom:6px">👤 Le bon professionnel</p>'+
+    '<p class="sub" style="font-size:15.5px;margin-bottom:6px"><b>'+pro.spec+'</b> près de chez vous</p>'+
+    '<p class="sub" style="font-size:14px">'+pro.note+'</p>';
+  $('derYes').onclick=()=>deriveAnswer(k,true);
+  $('derNo').onclick=()=>deriveAnswer(k,false);
+  go('s-derive');
+}
+function deriveAnswer(k,yes){
+  if(!(D.derivedAsked||[]).includes(k)){ (D.derivedAsked=D.derivedAsked||[]).push(k); }
+  if(yes){
+    (D.derivations=D.derivations||[]).push({d:todayStr(),pillar:k,pro:PROS[k].spec});
+    save();
+    showOvl('🤝','Demande transmise !','(Maquette) Un <b>'+PROS[k].spec.toLowerCase()+'</b> proche de chez vous recevrait votre demande et vous rappellerait. Vos données ne quittent pas ce prototype.','Parfait 👍',()=>showGarden());
+  } else {
+    save();
+    showOvl('💪','Très bien !','On continue l\'entraînement ensemble. Vix ne vous reposera plus la question pour ce pilier.','Merci Vix',()=>showGarden());
+  }
+}
+
+/* ═══════════════════ ACOUPHÈNES — parcours TRT ═══════════════════ */
+function acouQ1(has){
+  if(!has){ D.tinnitus.has=false; save(); startBilan(); return; }
+  D.tinnitus.has=true;
+  setVix('vixAcou','think');
+  $('acouBubble').innerHTML='D\'accord, on va s\'en occuper ensemble. Ces bruits <b>changent-ils</b> quand vous bougez la mâchoire ou la nuque ?';
+  $('acouOpts').innerHTML='<button class="btn opt" onclick="acouQ2(\'somato\')">Oui, ça les modifie</button>'+
+    '<button class="btn opt" onclick="acouQ2(\'auditif\')">Non, ils sont constants</button>'+
+    '<button class="btn opt" onclick="acouQ2(\'inconnu\')">Je ne sais pas</button>';
+}
+function acouQ2(origin){ D.tinnitus.origin=origin; save(); startBilan(); }
+
+const TIN_TIPS=[
+  'Évitez le silence complet : un fond sonore léger (radio douce, fenêtre ouverte) facilite l\'habituation.',
+  'Plus on « surveille » son acouphène, plus le cerveau le juge important. Les activités absorbantes sont vos alliées.',
+  'Le stress amplifie souvent la perception : la cohérence cardiaque (5 min de respiration lente) peut aider.',
+  'Protégez vos oreilles du bruit fort, mais ne les surprotégez pas au quotidien : le cerveau a besoin de sons.',
+  'Un sommeil régulier réduit la gêne perçue le lendemain — votre pilier Vigilance compte aussi ici !'
+];
+let tinNode=null;
+function tinToggle(){
+  if(tinNode){ tinStop(); return; }
+  AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==='suspended') AC.resume();
+  const len=AC.sampleRate*6, buf=AC.createBuffer(1,len,AC.sampleRate);
+  const d=buf.getChannelData(0); let last=0;
+  for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+0.02*w)/1.02; d[i]=last*2.4; }
+  const src=AC.createBufferSource(); src.buffer=buf; src.loop=true;
+  const fl=AC.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value=900;
+  const g=AC.createGain(); g.gain.value=0.18;
+  src.connect(fl); fl.connect(g); g.connect(AC.destination); src.start();
+  tinNode={stop:()=>{ try{src.stop()}catch(e){} }};
+  $('tinPlayBtn').textContent='⏸️ Arrêter le bruit';
+}
+function tinStop(){
+  if(tinNode){ tinNode.stop(); tinNode=null; }
+  const b=$('tinPlayBtn'); if(b) b.textContent='▶️ Lancer le bruit apaisant';
+}
+function tinBack(){ tinStop(); showGarden(); }
+function evaLog(v){
+  const t=todayStr(), arr=D.tinnitus.eva;
+  const cur=arr.find(e=>e.d===t);
+  if(cur){ cur.v=v; $('evaMsg').textContent='Mis à jour ✔️'; }
+  else { arr.push({d:t,v:v}); D.neurones+=5; gainFx('+5 ⚡'); $('evaMsg').innerHTML='Merci ! <b>+5 neurones</b> pour ce suivi 📈'; }
+  if(arr.length>90) D.tinnitus.eva=arr.slice(-90);
+  save(); renderEva();
+}
+function renderEva(){
+  const t=todayStr(); const cur=D.tinnitus.eva.find(e=>e.d===t);
+  $('evaGrid').innerHTML=Array.from({length:11},(_,i)=>
+    '<button class="'+(cur&&cur.v===i?'sel':'')+'" onclick="evaLog('+i+')" aria-label="Gêne '+i+' sur 10">'+i+'</button>').join('');
+}
+function showTinnitus(){
+  setVix('vixTin','happy');
+  renderEva(); $('evaMsg').textContent='';
+  const tip=TIN_TIPS[new Date().getDate()%TIN_TIPS.length];
+  $('tinConseil').innerHTML='<p class="sub" style="font-weight:700;margin-bottom:6px">💡 Le conseil du jour</p><p class="sub" style="font-size:15px">'+tip+'</p>';
+  const somato=D.tinnitus.origin==='somato';
+  $('tinDeriv').innerHTML='<p class="sub" style="font-weight:700;margin-bottom:6px">🤝 Aller plus loin</p>'+
+    '<p class="sub" style="font-size:14.5px;margin-bottom:12px">'+
+    (somato
+      ? 'Vos réponses évoquent une composante <b>cervicale ou mandibulaire</b> : un <b>ostéopathe</b> (nuque / mâchoire) peut souvent soulager ce type d\'acouphène.'
+      : 'La première étape recommandée est un <b>bilan auditif complet</b> chez un <b>audioprothésiste</b> — l\'audition bien corrigée réduit la charge cognitive (travaux de F. Lin, Johns Hopkins).')+
+    '</p><button class="btn primary" onclick="tinConsent()">Être mis en relation 🤝</button>'+
+    '<p class="sub" style="font-size:12.5px;margin-top:8px">Uniquement avec votre accord explicite · gratuit · vos données restent privées.</p>';
+  go('s-tinnitus');
+}
+function tinConsent(){
+  showOvl('🤝','Demande enregistrée !','Dans la version finale, Mentavix transmettrait vos coordonnées — <b>avec votre consentement</b> — à un professionnel proche de chez vous. Aucune donnée n\'est envoyée dans ce prototype.','Compris 👍');
+}
+
+/* ═══════════════════ AUDIO : brouhaha + voix (DIN) ═══════════════════ */
+let AC=null;
+function noiseStart(){
+  AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==='suspended') AC.resume();
+  const len=AC.sampleRate*6, buf=AC.createBuffer(1,len,AC.sampleRate);
+  const d=buf.getChannelData(0);
+  let last=0;
+  for(let i=0;i<len;i++){ const w=Math.random()*2-1; last=(last+0.03*w)/1.03; d[i]=last*3.2; }
+  const src=AC.createBufferSource(); src.buffer=buf; src.loop=true;
+  const g=AC.createGain(); g.gain.value=0.45;
+  src.connect(g); g.connect(AC.destination); src.start();
+  return {stop:()=>{ try{src.stop()}catch(e){} }};
+}
+function speakDigits(digits,done){
+  const u=new SpeechSynthesisUtterance(digits.join(', '));
+  u.lang='fr-FR'; u.rate=0.8; u.volume=1;
+  u.onend=done; u.onerror=done;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+/* ═══════════════════ BANQUE D'EXERCICES — 7 PILIERS ═══════════════════ */
+const MIND_GOOD=[['🫐','Myrtilles'],['🌰','Noix'],['🥬','Épinards'],['🐟','Saumon'],['🫒','Huile d\'olive'],['🫘','Lentilles'],['🥦','Brocoli'],['🍵','Thé vert'],
+  ['🍓','Fraises'],['🥑','Avocat'],['🍇','Raisin'],['🌾','Céréales complètes'],['🐔','Volaille'],['🍊','Agrumes']];
+const MIND_BAD=[['🥓','Charcuterie'],['🍟','Fritures'],['🥤','Soda'],['🍰','Pâtisseries'],['🧈','Beurre en excès'],['🥫','Plats ultra-transformés'],
+  ['🍬','Bonbons'],['🍕','Pizza industrielle'],['🧂','Excès de sel'],['🍺','Alcool en excès']];
+
+let physIdx=0;
+const PHYS=[
+  {em:'🦩',t:'Équilibre unipodal',dur:10,go:'Tenez bon…',sci:'🔬 SPPB (Guralnik, 1994)',
+   instr:'Debout près d\'un appui solide (table, dossier), tenez sur un pied.'},
+  {em:'🪑',t:'Levers de chaise',dur:15,go:'5 levers, c\'est parti !',sci:'🔬 Chair Stand — SPPB (Guralnik, 1994)',
+   instr:'Assis sur une chaise, levez-vous puis rasseyez-vous 5 fois, sans les mains si possible.'},
+  {em:'🚶',t:'Marche énergique sur place',dur:30,go:'Genoux hauts !',sci:'🔬 Activité physique (Commission Lancet, 2020)',
+   instr:'Debout, marchez sur place en levant bien les genoux, à votre rythme.'},
+  {em:'✊',t:'Force de poigne',dur:15,go:'Serrez… relâchez… serrez !',sci:'🔬 Force de préhension (marqueur de sarcopénie)',
+   instr:'Serrez fort une balle souple ou une serviette roulée : 5 secondes, puis relâchez. Répétez.'}
+];
+const GEN = {
+  /* ── AUDITION (stratégique) ── */
+  audition:{pillar:'audition',label:'Chiffres dans le bruit',
+    run(cb){
+      const pool=shuffle([1,2,3,4,5,6,7,8,9]);
+      const digits=pool.slice(0,3);
+      let replayed=false;
+      const ask=()=>{
+        $('fInstr').textContent='Quel était le chiffre du milieu ?';
+        $('fStim').className='stim'; $('fStim').textContent='👂 ➜ ?';
+        opts($('fOpts'),shuffle([digits[1],digits[0],digits[2],pool[3]]).map(String),String(digits[1]),cb);
+      };
+      const play=()=>{
+        $('fInstr').textContent='Écoutez attentivement…';
+        $('fOpts').innerHTML='';
+        const n=noiseStart();
+        setTimeout(()=>{ speakDigits(digits,()=>{ setTimeout(()=>{ n.stop();
+          if(!replayed){
+            replayed=true;
+            $('fInstr').textContent='Vous pouvez réécouter une fois, ou répondre.';
+            $('fOpts').innerHTML='<button class="btn ghost mb" id="replayBtn">🔁 Réécouter (1 fois)</button><button class="btn primary" id="answerBtn">Je réponds ! ✋</button>';
+            $('replayBtn').onclick=play; $('answerBtn').onclick=ask;
+          } else ask();
+        },500); }); },700);
+      };
+      if('speechSynthesis' in window){
+        $('fInstr').textContent='Montez le volume 🔊 — vous allez entendre 3 chiffres cachés dans un brouhaha.';
+        $('fStim').className='stim'; $('fStim').textContent='👂';
+        $('fOpts').innerHTML='<button class="btn primary" id="listenBtn">🔊 Écouter les 3 chiffres</button>';
+        $('listenBtn').onclick=play;
+      } else {
+        $('fInstr').textContent='Mémorisez ces 3 chiffres… vite !';
+        $('fStim').className='stim'; $('fStim').textContent=digits.join(' · ');
+        setTimeout(()=>{ $('fStim').textContent=''; ask(); },1800);
+      }
+    }},
+
+  /* ── INHIBITION ── */
+  stroop:{pillar:'inhibition',label:'Couleurs piégées',
+    run(cb){ $('fInstr').textContent=''; stroopRound($('fOpts'),$('fStim'),g=>cb(g)); }},
+  gonogo:{pillar:'inhibition',label:'Go / No-Go',sci:'🔬 Paradigme Go/No-Go (Donders, 1868)',
+    run(cb){
+      let trial=0, ok=0, tapped=false, active=false;
+      $('fInstr').textContent='VERT = tapez vite ! ROUGE = ne bougez surtout pas.';
+      $('fStim').className='';
+      $('fStim').innerHTML='<div class="reflexzone" id="rz">Préparez-vous…</div>';
+      $('fOpts').innerHTML='';
+      const rz=$('rz');
+      rz.onclick=()=>{ if(active) tapped=true; };
+      function next(){
+        if(trial===3){ cb(ok>=2); return; }
+        trial++;
+        rz.className='reflexzone'; rz.textContent='Manche '+trial+'/3…';
+        setTimeout(()=>{
+          const isGo=Math.random()<.6;
+          tapped=false; active=true;
+          rz.className='reflexzone '+(isGo?'go':'wait');
+          rz.textContent=isGo?'🟢 TAPEZ !':'🔴 NE BOUGEZ PAS';
+          setTimeout(()=>{
+            active=false;
+            const good=isGo?tapped:!tapped;
+            if(good)ok++;
+            rz.className='reflexzone';
+            rz.textContent=good?'✔️ Bien vu !':'✖️ Piégé !';
+            setTimeout(next,700);
+          },1400);
+        },600+Math.random()*900);
+      }
+      next();
+    }},
+
+  /* ── MÉMOIRE DE TRAVAIL ── */
+  doubletache:{pillar:'memoire',label:'Double tâche',sci:'🔬 Double tâche (Baddeley, 1986)',
+    run(cb){
+      const w=rnd(['ORCHIDÉE','BOUSSOLE','LANTERNE','GRENADE','TOURBILLON','ALAMBIC']);
+      $('fInstr').textContent='Retenez ce mot pendant la tâche suivante…';
+      $('fStim').className='stim small'; $('fStim').textContent=w;
+      setTimeout(()=>{
+        const a=Math.floor(Math.random()*20)+5,b=Math.floor(Math.random()*8)+2,r=a+b;
+        $('fInstr').textContent='D\'abord, un petit calcul :';
+        $('fStim').textContent=`${a} + ${b}`;
+        opts($('fOpts'),shuffle([r,r+1,r-2,r+3].map(String)),String(r),g1=>{
+          $('fInstr').textContent='Et maintenant… quel était le mot à retenir ?';
+          $('fStim').textContent='🤔';
+          opts($('fOpts'),shuffle([w,'BOUQUETIN','HORIZON','MÉSANGE']),w,g2=>cb(g1&&g2),600);
+        },600);
+      },3000);
+    }},
+  empan:{pillar:'memoire',label:'Chiffres à l\'envers',sci:'🔬 Empan inversé (WAIS-IV)',
+    run(cb){
+      const pool=shuffle([1,2,3,4,5,6,7,8,9]);
+      const seq=pool.slice(0,3);
+      $('fInstr').textContent='Mémorisez ces chiffres… vous devrez les taper À L\'ENVERS !';
+      $('fStim').className='stim';
+      let i=0;
+      const show=()=>{
+        if(i<seq.length){
+          $('fStim').textContent=seq[i]; i++;
+          setTimeout(()=>{ $('fStim').textContent=''; setTimeout(show,250); },900);
+        } else {
+          $('fInstr').textContent='Tapez-les du DERNIER au PREMIER :';
+          $('fStim').textContent='↩️ _ _ _';
+          const target=[...seq].reverse();
+          const btns=shuffle([...seq,...pool.slice(3,6)]);
+          let pos=0, fail=false;
+          $('fOpts').innerHTML='<div class="digitpad">'+btns.map(d=>`<button class="gcell" data-v="${d}">${d}</button>`).join('')+'</div>';
+          $('fOpts').querySelectorAll('.gcell').forEach(b=>b.onclick=()=>{
+            if(pos>=3) return;
+            const v=+b.dataset.v;
+            if(v===target[pos]){ b.classList.add('done'); pos++;
+              $('fStim').textContent='↩️ '+target.slice(0,pos).join(' ')+' _ _ _'.slice(0,(3-pos)*2);
+              if(pos===3) setTimeout(()=>cb(!fail),500);
+            } else { fail=true; b.classList.add('err'); setTimeout(()=>b.classList.remove('err'),450); }
+          });
+        }
+      };
+      show();
+    }},
+  association:{pillar:'memoire',label:'Associations',sci:'🔬 Réseaux sémantiques (Collins & Loftus, 1975)',
+    run(cb){
+      const p=rnd([['Abeille','Ruche',['Nid','Terrier','Grotte']],['Clé','Serrure',['Fenêtre','Marteau','Corde']],
+        ['Vigne','Vendange',['Moisson','Cueillette','Récif']],['Phare','Marin',['Berger','Pilote','Mineur']],
+        ['Aiguille','Fil',['Corde','Ficelle','Câble']],['Enclume','Forgeron',['Menuisier','Potier','Berger']],
+        ['Archet','Violon',['Tambour','Flûte','Piano']],['Voile','Vent',['Pluie','Neige','Brume']],
+        ['Palette','Peintre',['Sculpteur','Photographe','Écrivain']],['Filet','Pêcheur',['Chasseur','Fermier','Boulanger']],
+        ['Selle','Cheval',['Vache','Chèvre','Mouton']],['Encrier','Plume',['Pinceau','Crayon','Craie']]]);
+      $('fInstr').textContent='Quel mot va le mieux avec :';
+      $('fStim').className='stim'; $('fStim').textContent=p[0];
+      opts($('fOpts'),shuffle([p[1],...p[2]]),p[1],cb);
+    }},
+
+  intrus:{pillar:'memoire',label:'Cherchez l\'intrus',sci:'🔬 Catégorisation sémantique (Rosch, 1975)',
+    run(cb){
+      const S=rnd([
+        {set:['Pomme','Poire','Cerise'],odd:'Carotte'},
+        {set:['Truite','Saumon','Brochet'],odd:'Dauphin'},
+        {set:['Rose','Tulipe','Marguerite'],odd:'Chêne'},
+        {set:['Marteau','Tournevis','Scie'],odd:'Casserole'},
+        {set:['Chemise','Pantalon','Veste'],odd:'Parapluie'},
+        {set:['Loire','Rhône','Garonne'],odd:'Baïkal'},
+        {set:['Cuivre','Fer','Zinc'],odd:'Granit'},
+        {set:['Merle','Moineau','Hirondelle'],odd:'Chauve-souris'}]);
+      $('fInstr').textContent='Un de ces mots ne va pas avec les autres… lequel ?';
+      $('fStim').className='stim small'; $('fStim').textContent='🕵️';
+      opts($('fOpts'),shuffle([S.odd,...S.set]),S.odd,cb);
+    }},
+
+  /* ── VITESSE ── */
+  calcul:{pillar:'vitesse',label:'Calcul mental',sci:'🔬 Fluence numérique (WAIS-IV)',
+    run(cb){
+      const a=Math.floor(Math.random()*40)+11,b=Math.floor(Math.random()*9)+3;
+      const op=rnd(['+','−','×']);
+      const r=op==='+'?a+b:op==='−'?a-b:a*b;
+      if(op!=='×' && Math.random()<0.4){
+        /* variante à trou : a op ? = r */
+        $('fInstr').textContent='Trouvez le nombre manquant !';
+        $('fStim').className='stim'; $('fStim').textContent=`${a} ${op} ? = ${r}`;
+        opts($('fOpts'),shuffle([b,b+2,b-1,b+3].map(String)),String(b),cb);
+      } else {
+        $('fInstr').textContent='À vos neurones… calculez !';
+        $('fStim').className='stim'; $('fStim').textContent=`${a} ${op} ${b}`;
+        opts($('fOpts'),shuffle([r,r+2,r-1,r+10].map(String)),String(r),cb);
+      }
+    }},
+  logique:{pillar:'vitesse',label:'Suites logiques',sci:'🔬 Raisonnement inductif (Cattell)',
+    run(cb){
+      /* générateur procédural : jamais deux fois la même suite */
+      let q,a,d;
+      const kind=rnd(['arith','geo','alt','fibo','lettres']);
+      if(kind==='arith'){
+        const s0=2+Math.floor(Math.random()*9), st=2+Math.floor(Math.random()*7);
+        q=[s0,s0+st,s0+2*st,s0+3*st].join(' · ')+' · ?'; a=s0+4*st; d=[a+st,a-1,a+2];
+      } else if(kind==='geo'){
+        const s0=rnd([1,2,3]), k=rnd([2,3]);
+        const seq=[s0,s0*k,s0*k*k,s0*k*k*k];
+        q=seq.join(' · ')+' · ?'; a=seq[3]*k; d=[a-k,a+k,Math.round(a/2)];
+      } else if(kind==='alt'){
+        const s0=3+Math.floor(Math.random()*10), up=4+Math.floor(Math.random()*4);
+        q=[s0,s0+up,s0+up-1,s0+2*up-1,s0+2*up-2].join(' · ')+' · ?'; a=s0+3*up-2; d=[a-2,a+1,a+3];
+      } else if(kind==='fibo'){
+        const x=1+Math.floor(Math.random()*3), y=x+1;
+        q=[x,y,x+y,x+2*y].join(' · ')+' · ?'; a=2*x+3*y; d=[a+1,a-2,a+3];
+      } else {
+        const start=65+Math.floor(Math.random()*8), st=rnd([1,2,3]);
+        const L=i=>String.fromCharCode(start+i*st);
+        q=[L(0),L(1),L(2),L(3)].join(' · ')+' · ?'; a=L(4);
+        d=[String.fromCharCode(start+4*st+1),String.fromCharCode(start+4*st-1),String.fromCharCode(start+4*st+2)];
+      }
+      d=[...new Set(d.map(String))].filter(x=>x!==String(a)).slice(0,3);
+      while(d.length<3) d.push(String(a)+'0');
+      $('fInstr').textContent='Quelle est la suite logique ?';
+      $('fStim').className='stim small'; $('fStim').textContent=q;
+      opts($('fOpts'),shuffle([String(a),...d]),String(a),cb);
+    }},
+  trail:{pillar:'vitesse',label:'Le sentier',sci:'🔬 Trail Making Test (Reitan, 1958)',
+    run(cb){
+      const order=['1','A','2','B','3','C'];
+      const cells=shuffle([...order]);
+      $('fInstr').textContent='Touchez dans l\'ordre : 1 → A → 2 → B → 3 → C';
+      $('fStim').className=''; $('fStim').innerHTML='';
+      let pos=0, errors=0;
+      $('fOpts').innerHTML='<div class="grid3">'+cells.map(v=>`<button class="gcell" data-v="${v}">${v}</button>`).join('')+'</div><div style="min-height:24px" class="center sub" id="trailMsg"></div>';
+      $('fOpts').querySelectorAll('.gcell').forEach(b=>b.onclick=()=>{
+        if(b.classList.contains('done')) return;
+        if(b.dataset.v===order[pos]){
+          b.classList.add('done'); pos++;
+          if(pos===order.length) setTimeout(()=>cb(errors<=1),450);
+        } else { errors++; b.classList.add('err'); $('trailMsg').textContent='Oups — cherchez « '+order[pos]+' »'; setTimeout(()=>b.classList.remove('err'),450); }
+      });
+    }},
+
+  /* ── VIGILANCE ── */
+  pvt:{pillar:'vigilance',label:'Réflexe éclair',
+    run(cb){
+      $('fInstr').textContent='Dès que la zone devient VERTE, tapez dessus le plus vite possible !';
+      $('fStim').className='';
+      $('fStim').innerHTML='<div class="reflexzone wait" id="rz">Attendez le vert…</div>';
+      $('fOpts').innerHTML='';
+      const rz=$('rz');
+      let state='wait', t0=0, to=null;
+      const delay=1500+Math.random()*2200;
+      to=setTimeout(()=>{
+        state='go'; t0=performance.now();
+        rz.className='reflexzone go'; rz.textContent='🟢 TAPEZ !';
+        setTimeout(()=>{ if(state==='go'){ state='off'; cb(false); } },2500);
+      },delay);
+      rz.onclick=()=>{
+        if(state==='wait'){ state='off'; clearTimeout(to); rz.className='reflexzone'; rz.textContent='Trop tôt ! 😅'; setTimeout(()=>cb(false),700); }
+        else if(state==='go'){
+          state='off';
+          const ms=Math.round(performance.now()-t0);
+          rz.className='reflexzone'; rz.textContent=ms+' ms !';
+          setTimeout(()=>cb(ms<1000),800);
+        }
+      };
+    }},
+  comptage:{pillar:'vigilance',label:'Comptage sélectif',sci:'🔬 Recherche visuelle (Treisman, 1980)',
+    run(cb){
+      let blue=0,html='';
+      for(let i=0;i<25;i++){ const b=Math.random()<.45; if(b)blue++; html+=`<div class="dot ${b?'b':'r'}"></div>`; }
+      $('fInstr').textContent='Combien de points BLEUS ?';
+      $('fStim').innerHTML=`<div class="grid5">${html}</div>`; $('fStim').className='';
+      opts($('fOpts'),shuffle([blue,blue+1,blue-1,blue+2].map(String)),String(blue),cb);
+    }},
+
+  memopos:{pillar:'vigilance',label:'Cases lumineuses',sci:'🔬 Blocs de Corsi (1972)',
+    run(cb){
+      const seq=shuffle([0,1,2,3,4,5,6,7,8]).slice(0,3);
+      $('fInstr').textContent='Regardez bien les cases s\'allumer…';
+      $('fStim').className=''; $('fStim').innerHTML='';
+      $('fOpts').innerHTML='<div class="grid3">'+Array.from({length:9},(_,i)=>
+        '<button class="gcell" data-i="'+i+'" disabled aria-label="Case '+(i+1)+'">&nbsp;</button>').join('')+'</div>';
+      const cells=$('fOpts').querySelectorAll('.gcell');
+      let k=0;
+      const flash=()=>{
+        if(k<seq.length){
+          const c=cells[seq[k]];
+          c.classList.add('done');
+          setTimeout(()=>{ c.classList.remove('done'); k++; setTimeout(flash,250); },550);
+        } else {
+          $('fInstr').textContent='À vous ! Retapez-les dans le même ordre.';
+          cells.forEach(c=>c.disabled=false);
+          let pos=0, fail=false;
+          cells.forEach(c=>c.onclick=()=>{
+            if(pos>=3) return;
+            if(+c.dataset.i===seq[pos]){ c.classList.add('done'); pos++;
+              if(pos===3) setTimeout(()=>cb(!fail),500);
+            } else { fail=true; c.classList.add('err'); setTimeout(()=>c.classList.remove('err'),450); }
+          });
+        }
+      };
+      setTimeout(flash,600);
+    }},
+
+  /* ── NUTRITION ── */
+  mindtri:{pillar:'nutrition',label:'Le tri MIND',
+    run(cb){
+      let round=0, ok=0;
+      function next(){
+        if(round===3){ cb(ok>=2); return; }
+        round++;
+        const isGood=Math.random()<.5;
+        const item=isGood?rnd(MIND_GOOD):rnd(MIND_BAD);
+        $('fInstr').textContent='Manche '+round+'/3 — Cet aliment, pour votre cerveau ?';
+        $('fStim').className='stim small'; $('fStim').innerHTML='<span style="font-size:52px">'+item[0]+'</span><br>'+item[1];
+        $('fOpts').innerHTML='<div class="btnrow"><button class="btn green" data-v="good">🧠 Bon allié</button><button class="btn" style="background:#F3D0C0;border-bottom-color:#DBA085;color:#7A3B1F" data-v="bad">⚠️ À limiter</button></div>';
+        $('fOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+          const good=(b.dataset.v==='good')===isGood;
+          if(good)ok++;
+          b.style.outline=good?'4px solid #2C8F52':'4px solid #B03A36';
+          setTimeout(next,650);
+        });
+      }
+      next();
+    }},
+
+  nutriquiz:{pillar:'nutrition',label:'Quiz du cerveau gourmand',sci:'🔬 Régime MIND (Morris et al., 2015)',
+    run(cb){
+      const Q=rnd([
+        {q:'Combien de repas de poisson par semaine conseille le régime MIND ?',a:'Au moins 1',d:['Aucun','Tous les jours','6 minimum']},
+        {q:'Quelle matière grasse privilégier au quotidien ?',a:'Huile d\'olive',d:['Beurre','Margarine','Saindoux']},
+        {q:'Quels fruits sont les stars du régime MIND ?',a:'Les baies (myrtilles…)',d:['Les bananes','Les pommes','Les poires']},
+        {q:'Les légumes à feuilles vertes, c\'est…',a:'6 portions/semaine ou +',d:['1 par mois','À éviter','Seulement l\'été']},
+        {q:'Le régime MIND combine…',a:'Méditerranéen + DASH',d:['Végan + paléo','Cétogène + jeûne','Sans gluten + cru']},
+        {q:'Pour les noix, la bonne fréquence c\'est…',a:'Presque tous les jours',d:['Jamais','1 fois par mois','Uniquement en hiver']}]);
+      $('fInstr').textContent=Q.q;
+      $('fStim').className='stim'; $('fStim').textContent='🥗';
+      opts($('fOpts'),shuffle([Q.a,...Q.d]),Q.a,cb);
+    }},
+
+  /* ── ÉQUILIBRE / CORPS (rotation de 4 exercices SPPB) ── */
+  equilibre:{pillar:'corps',label:'Pause corps',
+    run(cb){
+      const p=PHYS[physIdx++ % PHYS.length];
+      $('fSci').textContent=p.sci;
+      $('fInstr').innerHTML='';
+      $('fStim').className='stim small';
+      $('fStim').innerHTML='<span style="font-size:46px">'+p.em+'</span><br><span style="font-size:17px;font-family:\'Atkinson Hyperlegible\',sans-serif;font-weight:400"><b>'+p.t+'</b><br>'+p.instr+'<br><b style="color:#B03A36">Restez toujours près d\'un appui.</b></span>';
+      $('fOpts').innerHTML='<button class="btn primary" id="readyBtn">Je suis prêt·e ! 💪</button>';
+      $('readyBtn').onclick=()=>{
+        let t=p.dur;
+        $('fStim').innerHTML='<div class="bigtimer" id="bigT">'+t+'</div>';
+        $('fInstr').textContent=p.go;
+        $('fOpts').innerHTML='';
+        const iv=setInterval(()=>{
+          t--;
+          if(t<=0){ clearInterval(iv);
+            $('fStim').innerHTML='<span style="font-size:52px">⏰</span>';
+            $('fInstr').textContent='Alors, comment ça s\'est passé ?';
+            $('fOpts').innerHTML='<button class="btn green mb" data-v="ok">J\'ai réussi ! 💪</button><button class="btn ghost" data-v="ko">Presque… je retenterai</button>';
+            $('fOpts').querySelectorAll('button').forEach(b=>b.onclick=()=>cb(b.dataset.v==='ok'));
+          } else $('bigT').textContent=t;
+        },1000);
+      };
+    }}
+};
+
+/* ═══════════════════ MOTEUR DE SÉANCE ═══════════════════ */
+let sessionLen=8;
+let feedIdx=0,feedPlan=[],feedOK=0,combo=0,sessionStartBA=0;
+const OK_MSGS=['Génial ! Vos neurones tissent de nouvelles connexions. <b>−0,1 an</b> ⚡','Bien joué ! Votre cortex préfrontal adore ça. <b>−0,1 an</b> ⚡','Parfait ! Votre réserve cognitive grandit. <b>−0,1 an</b> ⚡'];
+const COMBO_MSGS=['🔥 <b>Combo ×COMBO !</b> Vous êtes en feu ! <b>−0,1 an</b> + bonus ⚡','⚡ <b>Série de COMBO !</b> Votre cerveau turbine ! Bonus neurones !'];
+const KO_MSGS=['Pas grave du tout ! Le cerveau apprend <b>surtout</b> de ses erreurs. On continue !','Presque ! La difficulté, c\'est exactement ce qui muscle le cerveau. 💪','Chaque essai renforce le circuit, même celui-là. Courage !'];
+
+function genWeight(key){
+  const g=GEN[key], p=D.pillars[g.pillar];
+  let w=Math.max(15,100-p.score);
+  if(p.last && wiltDays(g.pillar)>=4) w+=40;      /* pilier qui a soif */
+  if(!p.last) w+=25;                               /* jamais exploré */
+  if(g.pillar==='audition') w=Math.max(w,60);      /* pilier stratégique */
+  if(D.recent && D.recent.includes(key)) w=Math.max(8,Math.round(w*0.35)); /* anti-lassitude */
+  return w;
+}
+function buildPlan(){
+  const keys=Object.keys(GEN), pool=[];
+  keys.forEach(k=>{ const w=genWeight(k); for(let i=0;i<w;i+=10)pool.push(k); });
+  const plan=[];
+  while(plan.length<sessionLen){
+    const k=rnd(pool);
+    if(plan[plan.length-1]!==k) plan.push(k);
+  }
+  if(!plan.includes('audition')) plan[1+Math.floor(Math.random()*(sessionLen-1))]='audition';
+  return plan;
+}
+function buildPillarPlan(pk){
+  const keys=Object.keys(GEN).filter(k=>GEN[k].pillar===pk);
+  const plan=[];
+  for(let i=0;i<sessionLen;i++) plan.push(keys[i%keys.length]);
+  return keys.length>1 ? shuffle(plan) : plan;
+}
+function recordResult(pk,good){
+  const p=D.pillars[pk];
+  p.tries++; if(good)p.ok++;
+  p.score=Math.max(20,Math.min(99,p.score+(good?2:-3)));
+  p.last=todayStr();
+  p.hist=p.hist||[];
+  const hl=p.hist[p.hist.length-1];
+  if(hl&&hl.d===p.last) hl.score=p.score; else p.hist.push({d:p.last,score:p.score});
+  if(p.hist.length>30) p.hist=p.hist.slice(-30);
+  D.totalExos++;
+  save();
+}
+function startFeed(pk){
+  feedIdx=0;feedOK=0;combo=0;
+  if(pk && PILLARS[pk]){ sessionLen=4; feedPlan=buildPillarPlan(pk); }
+  else { sessionLen=8; feedPlan=buildPlan(); }
+  sessionStartBA=D.brainAge;
+  $('liveAge').textContent=D.brainAge.toFixed(1);
+  $('liveNeur').textContent=D.neurones;
+  $('liveStreak').textContent=Math.max(1,D.streak);
+  go('s-feed'); nextExercise();
+}
+function gainFx(txt){
+  const g=document.createElement('div');
+  g.className='gain'; g.textContent=txt;
+  g.style.left=(120+Math.random()*80)+'px'; g.style.top='70px';
+  $('app').appendChild(g); setTimeout(()=>g.remove(),1300);
+}
+function nextExercise(){
+  if(feedIdx===sessionLen) return endSession();
+  $('feedBar').style.width=(feedIdx/sessionLen*100)+'%';
+  const key=feedPlan[feedIdx], g=GEN[key], P=PILLARS[g.pillar];
+  D.recent=(D.recent||[]).filter(x=>x!==key); D.recent.push(key); if(D.recent.length>8)D.recent.shift();
+  $('fPillar').textContent='Entraînement '+(feedIdx+1)+'/'+sessionLen+' · '+P.name+' '+P.em;
+  $('fSci').textContent=g.sci||P.sci;
+  $('fFb').style.display='none'; $('vixFeed').style.display='none';
+  $('fStim').innerHTML=''; $('fOpts').innerHTML='';
+  g.run(good=>{
+    recordResult(g.pillar,good);
+    const el=$('liveAge');
+    $('vixFeed').style.display='block'; $('fFb').style.display='block';
+    if(good){
+      feedOK++; combo++;
+      const bonus=combo>=3?combo*2:0;
+      D.brainAge=Math.round((D.brainAge-0.1)*10)/10;
+      D.neurones+=10+bonus;
+      gainFx('+'+(10+bonus)+' ⚡');
+      $('fFb').innerHTML = combo>=3 ? rnd(COMBO_MSGS).replace(/COMBO/g,combo) : rnd(OK_MSGS);
+      setVix('vixFeed',combo>=4?'wow':'joy',true);
+      el.classList.add('down');
+    } else {
+      combo=0;
+      D.brainAge=Math.round((D.brainAge+0.05)*10)/10;
+      D.neurones+=2; gainFx('+2 ⚡');
+      $('fFb').innerHTML=rnd(KO_MSGS);
+      setVix('vixFeed','oops',true);
+      el.classList.add('up');
+    }
+    save();
+    el.textContent=D.brainAge.toFixed(1);
+    $('liveNeur').textContent=D.neurones;
+    setTimeout(()=>{ el.classList.remove('down','up'); feedIdx++; nextExercise(); },1700);
+  });
+}
+
+/* ═══════════════════ FIN DE SÉANCE ═══════════════════ */
+function endSession(){
+  $('feedBar').style.width='100%';
+  D.sessions++;
+  pushHistory();
+  const streakRes=updateStreak();
+  setVix('vixEnd','joy');
+  $('endAge').textContent=D.brainAge.toFixed(1);
+  const d=Math.round((sessionStartBA-D.brainAge)*10)/10;
+  $('endDelta').textContent = d>0 ? `−${d.toFixed(1)} an aujourd'hui ! ⬇️` : 'La régularité paiera dès demain !';
+  $('endSummary').innerHTML=`${feedOK}/${sessionLen} réussis · <b style="color:var(--corail2)">⚡ ${D.neurones} neurones</b>`;
+  $('endBadges').innerHTML='';
+  if(D.sessions===1) grantBadge('premiere','endBadges');
+  if(feedOK===sessionLen && sessionLen>=8) grantBadge('sansfaute','endBadges');
+  else if(feedOK/sessionLen>0.65) grantBadge('espritvif','endBadges');
+  streakRes.newBadges.forEach(id=>{ const b=BADGES[id]; addBadge('endBadges',b.ic,b.t,b.s); });
+  if(D.pillars.audition.ok>=5) grantBadge('auditionor','endBadges');
+  if(D.totalExos>=100) grantBadge('centexos','endBadges');
+  if(Object.keys(PILLARS).every(k=>D.pillars[k].last)) grantBadge('jardinier','endBadges');
+  /* série */
+  $('endStreakTxt').textContent='🔥 Série : '+D.streak+' jour'+(D.streak>1?'s':'');
+  $('endStreakSub').innerHTML = streakRes.bonus
+    ? 'Vous êtes revenu·e ! <b>+'+streakRes.bonus+' neurones bonus</b> 🎉'
+    : D.streak>=7 ? 'Une semaine complète — votre cerveau vous dit merci. 🙏'
+    : 'Revenez demain pour prolonger la série' + (D.streak===1?' — Vix vous prépare un <b>bonus de +50 neurones</b> !':' 🔥');
+  /* coffre du jour */
+  const today=todayStr();
+  $('endChestBtn').style.display = D.chestDay===today ? 'none' : 'block';
+  save();
+  go('s-end'); confetti();
+}
+function openChest(){
+  const today=todayStr();
+  if(D.chestDay===today) return;
+  D.chestDay=today;
+  const win=10+Math.floor(Math.random()*31);
+  D.neurones+=win; save();
+  $('endChestBtn').style.display='none';
+  confetti();
+  showOvl('🎁','Coffre du jour !','Vix y avait caché <b>+'+win+' neurones ⚡</b><br>Un coffre neuf vous attend demain !','Merci Vix ! 🙌',()=>{ checkLevelUp(); });
+}
+
+/* ═══════════════════ CONFETTIS ═══════════════════ */
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const em=['🎉','⚡','✨','🧠','🌟','🎊'];
+  for(let i=0;i<30;i++){
+    const s=document.createElement('span');
+    s.className='confetti'; s.textContent=rnd(em);
+    s.style.left=Math.random()*95+'%';
+    s.style.animationDuration=(2.2+Math.random()*2)+'s';
+    s.style.animationDelay=(Math.random()*0.9)+'s';
+    $('app').appendChild(s);
+    setTimeout(()=>s.remove(),5800);
+  }
+}
+
+/* ═══════════════════ DÉMARRAGE ═══════════════════ */
+load();
+lastLevel=levelInfo().n;
+if(D.brainAge!=null){ showGarden(); }
+else { $('ageVal').textContent=D.age; }
+</script>
+</body>
+</html>
