@@ -169,6 +169,15 @@ h1,h2,.disp{font-family:'Fraunces',serif}
 .legend{font-size:12.5px;color:var(--encre2);font-weight:700;text-align:center;margin-bottom:6px}
 .disclaimer{font-size:12px;color:var(--encre2);text-align:center;margin-top:14px;line-height:1.5}
 .resetlink{background:none;border:none;color:var(--encre2);font-size:12px;text-decoration:underline;cursor:pointer;margin-top:10px;font-family:inherit}
+.ringwrap{position:relative;width:124px;height:124px;margin:0 auto 6px}
+.ringwrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ringwrap .rlbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600}
+.ringwrap .rpct{font-size:26px}
+.ringwrap small{font-size:10.5px;color:var(--encre2);letter-spacing:.08em;text-transform:uppercase}
+.weekdots{display:flex;gap:8px;justify-content:center;margin:10px 0 4px}
+.weekdots span{width:27px;height:27px;border-radius:50%;border:1.5px solid var(--lisere);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--encre2);background:#fff}
+.weekdots span.on{background:var(--feuille);border-color:var(--feuille2);color:#fff}
+.pill.locked{opacity:.45;filter:grayscale(1)}
 .evagrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .evagrid button{min-height:50px;border-radius:14px;border:2.5px solid #E2D8C4;border-bottom:5px solid #E2D8C4;background:#fff;font-family:'Fraunces',serif;font-size:19px;font-weight:800;color:var(--encre);cursor:pointer}
 .evagrid button.sel{background:var(--corail);border-color:var(--corail2);color:#fff}
@@ -295,9 +304,23 @@ h1,h2,.disp{font-family:'Fraunces',serif}
       <div class="vix small" id="vixGarden"></div>
       <div class="bubble" id="gardenBubble">Content de vous revoir !</div>
     </div>
+    <div class="card center" style="padding:16px">
+      <div class="ringwrap">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="var(--lisere)" stroke-width="9"/>
+          <circle id="gRing" cx="50" cy="50" r="44" fill="none" stroke="var(--corail)" stroke-width="9"
+            stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="276" style="transition:stroke-dashoffset .9s ease"/>
+        </svg>
+        <div class="rlbl"><span class="rpct" id="gRingPct">0%</span><small>objectif du jour</small></div>
+      </div>
+      <p class="sub" id="gRingMsg" style="font-size:14px"></p>
+      <div class="weekdots" id="gWeek"></div>
+      <p class="sub" id="gWeekMsg" style="font-size:13.5px"></p>
+    </div>
     <div class="center mb"><span class="lvlchip" id="gLvl">🌱 Niveau 1</span>
       <div class="xpwrap"><div class="xpbar"><i id="gXp"></i></div><div class="xplbl" id="gXpLbl"></div></div>
       <div class="xplbl" id="gJoker" style="text-align:center"></div>
+      <div class="xplbl" id="gGoal" style="text-align:center;font-style:italic"></div>
     </div>
     <div class="card" style="padding:18px">
       <p class="sub" style="font-weight:700;margin-bottom:4px">Vos 7 piliers</p>
@@ -397,6 +420,7 @@ h1,h2,.disp{font-family:'Fraunces',serif}
     <b class="disp" id="endStreakTxt" style="font-size:19px">🔥 Série : 1 jour</b>
     <p class="sub" id="endStreakSub" style="font-size:15px;margin-top:6px"></p>
   </div>
+  <p class="sub center" id="endTease" style="font-size:13.5px;margin-top:4px"></p>
   <div class="spacer"></div>
   <button class="btn green" id="endChestBtn" onclick="openChest()" style="display:none">Ouvrir le coffre du jour</button>
   <button class="btn primary mt" onclick="startFeed()">Encore une séance</button>
@@ -459,6 +483,9 @@ function shuffle(a){ return a.sort(()=>Math.random()-.5); }
 function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
 function todayStr(d){ const x=d||new Date(); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
 function daysBetween(d1,d2){ return Math.round((new Date(d2)-new Date(d1))/86400000); }
+function mondayStr(){ const d=new Date(); const wd=(d.getDay()+6)%7; return todayStr(new Date(Date.now()-wd*86400000)); }
+const GOALS=['Rester autonome longtemps','Garder une mémoire fiable au quotidien','Rester vif pour mes proches'];
+function setGoal(i){ D.goal=GOALS[i]; save(); showGarden(); }
 
 /* ═══════════════ ÉTAT PERSISTANT (localStorage) ═══════════════ */
 const KEY='mentavix_v3';
@@ -501,6 +528,7 @@ function freshState(){
   return { age:65, brainAge:null, startBrainAge:null, neurones:0, badges:[],
     streak:0, bestStreak:0, lastDay:null, sessions:0, totalExos:0,
     history:[], pillars:p, chestDay:null, recent:[], lastJoker:null,
+    goal:null, dayEffort:{d:null,pct:0}, week:{id:null,days:[],rewarded:false}, milestones:0,
     derivedAsked:[], derivations:[],
     tinnitus:{has:false,origin:null,eva:[]} };
 }
@@ -755,6 +783,21 @@ function showGarden(){
   $('gLvl').textContent=li.cur.em+' Niveau '+li.n+' · '+li.cur.t;
   $('gXp').style.width=li.pct+'%';
   $('gXpLbl').textContent= li.next ? (D.neurones+' / '+li.next.xp+' ⚡ vers « '+li.next.t+' »') : 'Niveau maximum atteint ! 👑';
+  /* anneau + défi hebdo */
+  const tg=todayStr();
+  const pct=(D.dayEffort.d===tg)?D.dayEffort.pct:0;
+  $('gRingPct').textContent=pct+'%';
+  requestAnimationFrame(()=>{ $('gRing').style.strokeDashoffset=276-276*pct/100; });
+  $('gRingMsg').textContent= pct>=100?'Objectif du jour atteint.':pct>0?'Encore une séance ciblée pour fermer l\'anneau.':'Une séance complète ferme votre anneau.';
+  const monG=mondayStr();
+  if(D.week.id!==monG){ D.week={id:monG,days:[],rewarded:false}; save(); }
+  const labels=['L','M','M','J','V','S','D'];
+  $('gWeek').innerHTML=labels.map((l,i)=>{
+    const dd=todayStr(new Date(new Date(monG).getTime()+i*86400000));
+    return '<span class="'+(D.week.days.includes(dd)?'on':'')+'">'+l+'</span>';
+  }).join('');
+  $('gWeekMsg').textContent='Défi de la semaine : '+D.week.days.length+'/5 jours — récompense +100 neurones'+(D.week.rewarded?' · réussi ✔':'');
+  $('gGoal').textContent=D.goal?('Votre cap : '+D.goal.toLowerCase()):'';
   const jokerOk=!D.lastJoker || daysBetween(D.lastJoker,todayStr())>=7;
   $('gJoker').textContent= jokerOk
     ? 'Joker disponible : un jour manqué ne cassera pas votre série.'
@@ -782,8 +825,12 @@ function showGarden(){
     : thirsty.length ? 'Votre pilier <b>'+PILLARS[thirsty[0]].name.toLowerCase()+'</b> n\'a pas été travaillé depuis quelques jours. Une séance ciblée ?'
     : D.streak>0 ? 'Série de <b>'+D.streak+' jour'+(D.streak>1?'s':'')+'</b> en cours. On la prolonge ?'
     : 'Content de vous revoir. Votre entraînement vous attend.';
-  /* cartes dérivation, corps & acouphènes */
-  $('gExtras').innerHTML=deriveCardHTML()+
+  /* cartes cap, dérivation, corps & acouphènes */
+  const goalCard = D.goal ? '' :
+    '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Votre cap</p>'+
+    '<p class="sub" style="font-size:14px;margin-bottom:12px">Pourquoi entraînez-vous votre cerveau ? Votre raison s\'affichera chaque jour.</p>'+
+    GOALS.map((g,i)=>'<button class="btn ghost mb" style="min-height:52px;font-size:16px" onclick="setGoal('+i+')">'+g+'</button>').join('')+'</div>';
+  $('gExtras').innerHTML=goalCard+deriveCardHTML()+
     '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Anti-sarcopénie</p>'+
     '<p class="sub" style="font-size:14px;margin-bottom:12px">Le muscle protège le cerveau (Commission Lancet 2020). 4 exercices doux et guidés, 3 minutes.</p>'+
     '<button class="btn green" onclick="startFeed(\'corps\')">Séance corps guidée 🤸</button></div>'+
@@ -794,12 +841,10 @@ function showGarden(){
       : '');
   /* courbe 14 jours */
   drawCurve();
-  /* badges gagnés */
-  $('gBadges').innerHTML='';
-  if(D.badges.length){
-    $('gBadges').innerHTML='<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:10px">🏅 Vos badges ('+D.badges.length+'/'+Object.keys(BADGES).length+')</p>'+
-      D.badges.map(id=>{const b=BADGES[id];return '<span class="pill" title="'+b.s+'">'+b.ic+' '+b.t+'</span>';}).join('')+'</div>';
-  }
+  /* collection de badges : les verrouillés donnent envie */
+  $('gBadges').innerHTML='<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:10px">Votre collection ('+D.badges.length+'/'+Object.keys(BADGES).length+')</p>'+
+    Object.keys(BADGES).map(id=>{const b=BADGES[id];const has=D.badges.includes(id);
+      return '<span class="pill'+(has?'':' locked')+'" title="'+b.s+'">'+b.ic+' '+b.t+'</span>';}).join('')+'</div>';
   go('s-garden');
 }
 function drawCurve(){
@@ -1443,6 +1488,14 @@ function endSession(){
   D.sessions++;
   pushHistory();
   const streakRes=updateStreak();
+  /* anneau du jour */
+  const tday=todayStr();
+  if(D.dayEffort.d!==tday) D.dayEffort={d:tday,pct:0};
+  D.dayEffort.pct=Math.min(100,D.dayEffort.pct+(sessionLen>=8?100:34));
+  /* défi de la semaine */
+  const mon=mondayStr();
+  if(D.week.id!==mon) D.week={id:mon,days:[],rewarded:false};
+  if(D.dayEffort.pct>=100 && !D.week.days.includes(tday)) D.week.days.push(tday);
   setVix('vixEnd','joy');
   $('endAge').textContent=D.brainAge.toFixed(1);
   const d=Math.round((sessionStartBA-D.brainAge)*10)/10;
@@ -1456,6 +1509,10 @@ function endSession(){
   if(D.pillars.audition.ok>=5) grantBadge('auditionor','endBadges');
   if(D.totalExos>=100) grantBadge('centexos','endBadges');
   if(Object.keys(PILLARS).every(k=>D.pillars[k].last)) grantBadge('jardinier','endBadges');
+  if(D.week.days.length>=5 && !D.week.rewarded){
+    D.week.rewarded=true; D.neurones+=100;
+    addBadge('endBadges','🏆','Défi de la semaine réussi','5 jours d\'objectif atteints · +100 neurones');
+  }
   /* série */
   $('endStreakTxt').textContent='🔥 Série : '+D.streak+' jour'+(D.streak>1?'s':'');
   $('endStreakSub').innerHTML = streakRes.joker
@@ -1467,18 +1524,28 @@ function endSession(){
   /* coffre du jour */
   const today=todayStr();
   $('endChestBtn').style.display = D.chestDay===today ? 'none' : 'block';
+  $('endTease').textContent='Demain : coffre rechargé · Défi de la semaine : '+D.week.days.length+'/5 jours'+(D.dayEffort.pct<100?' · Fermez votre anneau avec une séance ciblée':'');
   save();
   go('s-end'); confetti();
+  /* jalon d'âge cérébral : −1 an, −2 ans… */
+  const drop=Math.floor(Math.max(0,D.startBrainAge-D.brainAge));
+  if(drop>D.milestones){
+    D.milestones=drop; save();
+    showOvl('★','−'+drop+' an'+(drop>1?'s':'')+' !','Votre âge cérébral estimé a baissé de <b>'+drop+' an'+(drop>1?'s':'')+'</b> depuis votre bilan initial. C\'est le fruit de votre régularité.','Continuer');
+  }
 }
 function openChest(){
   const today=todayStr();
   if(D.chestDay===today) return;
   D.chestDay=today;
-  const win=10+Math.floor(Math.random()*31);
+  const gold=Math.random()<0.15;
+  const win=gold ? 60+Math.floor(Math.random()*41) : 10+Math.floor(Math.random()*31);
   D.neurones+=win; save();
   $('endChestBtn').style.display='none';
   confetti();
-  showOvl('🎁','Coffre du jour !','Il contenait <b>+'+win+' neurones</b>.<br>Un nouveau coffre vous attend demain.','Continuer',()=>{ checkLevelUp(); });
+  showOvl(gold?'✦':'🎁', gold?'Coffre d\'or !':'Coffre du jour !',
+    (gold?'Rare : il contenait <b>+'+win+' neurones</b>.':'Il contenait <b>+'+win+' neurones</b>.')+'<br>Un nouveau coffre vous attend demain.',
+    'Continuer',()=>{ checkLevelUp(); });
 }
 
 /* ═══════════════════ CONFETTIS ═══════════════════ */
