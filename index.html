@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mentavix — Votre coach cérébral</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#B96A4B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mentavix">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -528,7 +534,7 @@ function freshState(){
   return { age:65, brainAge:null, startBrainAge:null, neurones:0, badges:[],
     streak:0, bestStreak:0, lastDay:null, sessions:0, totalExos:0,
     history:[], pillars:p, chestDay:null, recent:[], lastJoker:null,
-    goal:null, dayEffort:{d:null,pct:0}, week:{id:null,days:[],rewarded:false}, milestones:0,
+    goal:null, dayEffort:{d:null,pct:0}, week:{id:null,days:[],rewarded:false}, milestones:0, remind:false,
     derivedAsked:[], derivations:[],
     tinnitus:{has:false,origin:null,eva:[]} };
 }
@@ -830,7 +836,17 @@ function showGarden(){
     '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Votre cap</p>'+
     '<p class="sub" style="font-size:14px;margin-bottom:12px">Pourquoi entraînez-vous votre cerveau ? Votre raison s\'affichera chaque jour.</p>'+
     GOALS.map((g,i)=>'<button class="btn ghost mb" style="min-height:52px;font-size:16px" onclick="setGoal('+i+')">'+g+'</button>').join('')+'</div>';
-  $('gExtras').innerHTML=goalCard+deriveCardHTML()+
+  const pwaCard = isStandalone() ? '' :
+    '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Mentavix sur votre écran d\'accueil</p>'+
+    '<p class="sub" style="font-size:14px;margin-bottom:12px">Une icône, un geste, votre séance — comme une vraie application, même sans connexion.</p>'+
+    '<button class="btn ghost" onclick="installApp()">Installer l\'application</button></div>';
+  const remindOn = (typeof Notification!=='undefined' && Notification.permission==='granted' && D.remind);
+  const remindCard = remindOn
+    ? '<div class="card" style="padding:14px 18px"><p class="sub" style="font-size:14px">🔔 Rappels quotidiens activés.</p></div>'
+    : '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Un rappel en douceur</p>'+
+      '<p class="sub" style="font-size:14px;margin-bottom:12px">Recevez chaque jour une invitation discrète à votre séance.</p>'+
+      '<button class="btn ghost" onclick="enableReminders()">Activer les rappels</button></div>';
+  $('gExtras').innerHTML=goalCard+pwaCard+remindCard+deriveCardHTML()+
     '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Anti-sarcopénie</p>'+
     '<p class="sub" style="font-size:14px;margin-bottom:12px">Le muscle protège le cerveau (Commission Lancet 2020). 4 exercices doux et guidés, 3 minutes.</p>'+
     '<button class="btn green" onclick="startFeed(\'corps\')">Séance corps guidée 🤸</button></div>'+
@@ -1560,6 +1576,50 @@ function confetti(){
     s.style.animationDelay=(Math.random()*0.9)+'s';
     $('app').appendChild(s);
     setTimeout(()=>s.remove(),5800);
+  }
+}
+
+/* ═══════════ PWA : installation + rappels quotidiens ═══════════ */
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredPrompt=e;
+  try{ const a=document.querySelector('.screen.active'); if(a&&a.id==='s-garden') showGarden(); }catch(_){}
+});
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent||'');
+function isStandalone(){
+  try{ return matchMedia('(display-mode: standalone)').matches || navigator.standalone===true; }catch(_){ return false; }
+}
+if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+function installApp(){
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.finally(()=>{ deferredPrompt=null; showGarden(); });
+  } else if(isIOS){
+    showOvl('📲','Sur votre écran d\'accueil','Dans Safari : touchez le bouton <b>Partager</b> (le carré avec une flèche), puis choisissez « <b>Sur l\'écran d\'accueil</b> ». Mentavix aura son icône, comme une vraie application.','Compris');
+  } else {
+    showOvl('📲','Installation','Dans le menu de votre navigateur (⋮), choisissez « <b>Installer Mentavix</b> » ou « Ajouter à l\'écran d\'accueil ».','Compris');
+  }
+}
+async function enableReminders(){
+  if(typeof Notification==='undefined'){
+    showOvl('🔕','Non disponible','Votre navigateur ne permet pas les notifications. Sur iPhone, installez d\'abord Mentavix sur l\'écran d\'accueil.','Compris'); return;
+  }
+  try{
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted'){
+      showOvl('🔕','Rappels non activés','Vous pourrez les activer plus tard depuis cette même carte.','Compris'); return;
+    }
+    D.remind=true; save();
+    if('serviceWorker' in navigator){
+      const reg=await navigator.serviceWorker.ready;
+      if('periodicSync' in reg){ try{ await reg.periodicSync.register('mentavix-reminder',{minInterval:20*60*60*1000}); }catch(_){}}
+      try{ reg.showNotification('Mentavix',{body:'Rappels activés — à demain pour votre séance.',icon:'icon-192.png'}); }catch(_){}
+    }
+    showOvl('🔔','Rappels activés','Votre cerveau a rendez-vous chaque jour. À demain.','Parfait',()=>showGarden());
+  }catch(e){
+    showOvl('🔕','Non disponible','Votre navigateur ne permet pas encore les rappels automatiques. L\'icône sur votre écran d\'accueil reste le meilleur rappel.','Compris');
   }
 }
 
