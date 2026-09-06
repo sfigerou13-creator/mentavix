@@ -184,6 +184,11 @@ h1,h2,.disp{font-family:'Fraunces',serif}
 .weekdots span{width:27px;height:27px;border-radius:50%;border:1.5px solid var(--lisere);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;color:var(--encre2);background:#fff}
 .weekdots span.on{background:var(--feuille);border-color:var(--feuille2);color:#fff}
 .pill.locked{opacity:.45;filter:grayscale(1)}
+.librow{display:flex;justify-content:space-between;align-items:center;width:100%;background:#fff;border:1.5px solid var(--lisere);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;font-family:'Atkinson Hyperlegible',sans-serif;font-size:16.5px;font-weight:700;color:var(--encre);text-align:left;gap:10px}
+.librow small{display:block;font-weight:400;color:var(--encre2);font-size:13px;margin-top:3px}
+.librow .st{color:var(--feuille2);font-size:20px;flex-shrink:0}
+.article p{margin:0 0 14px;font-size:17px;line-height:1.68;color:var(--encre)}
+.article b{color:var(--corail2)}
 .evagrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .evagrid button{min-height:50px;border-radius:14px;border:2.5px solid #E2D8C4;border-bottom:5px solid #E2D8C4;background:#fff;font-family:'Fraunces',serif;font-size:19px;font-weight:800;color:var(--encre);cursor:pointer}
 .evagrid button.sel{background:var(--corail);border-color:var(--corail2);color:#fff}
@@ -363,6 +368,27 @@ h1,h2,.disp{font-family:'Fraunces',serif}
   <p class="disclaimer">Mentavix ne remplace pas un avis médical.</p>
 </section>
 
+<!-- ══════ BIBLIOTHÈQUE ══════ -->
+<section class="screen" id="s-library">
+  <div class="eyebrow">Bibliothèque</div>
+  <h2 style="font-size:24px;margin-bottom:4px">Comprendre votre cerveau</h2>
+  <p class="sub" style="font-size:14.5px;margin-bottom:6px">Des dossiers courts, fondés sur la recherche. Chaque lecture rapporte <b>10 neurones</b>.</p>
+  <p class="sub" id="libCount" style="font-weight:700;margin-bottom:14px"></p>
+  <div id="libList"></div>
+  <button class="btn ghost" onclick="showGarden()">← Retour au tableau de bord</button>
+</section>
+
+<!-- ══════ LECTEUR ══════ -->
+<section class="screen" id="s-article">
+  <div class="eyebrow">Comprendre</div>
+  <h2 id="artTitle" style="font-size:23px;line-height:1.25;margin-bottom:8px"></h2>
+  <span class="sci" id="artSci"></span>
+  <div class="article" id="artBody" style="margin-top:10px"></div>
+  <button class="btn green mb" id="artMark">J'ai compris — marquer comme lu</button>
+  <button class="btn primary mb" id="artTrain" style="display:none">M'entraîner sur ce pilier</button>
+  <button class="btn ghost" onclick="openLibrary()">← Retour à la bibliothèque</button>
+</section>
+
 <!-- ══════ ESPACE ACOUPHÈNES ══════ -->
 <section class="screen" id="s-tinnitus">
   <div class="eyebrow">Espace acouphènes</div>
@@ -514,7 +540,9 @@ const BADGES = {
   semainefeu: {ic:'🔥', t:'Semaine de feu',        s:'7 jours de série — votre cerveau vous dit merci'},
   jardinier:  {ic:'🌻', t:'Jardinier cérébral',    s:'Les 7 piliers travaillés au moins une fois'},
   auditionor: {ic:'👂', t:'Oreille d\'or',         s:'5 réussites au test d\'audition dans le bruit'},
-  centexos:   {ic:'💯', t:'Centurion',             s:'100 exercices réalisés au total'}
+  centexos:   {ic:'💯', t:'Centurion',             s:'100 exercices réalisés au total'},
+  curieux:    {ic:'📖', t:'Esprit curieux',        s:'5 dossiers de la bibliothèque lus'},
+  savant:     {ic:'🎓', t:'Cerveau savant',        s:'Toute la bibliothèque lue'}
 };
 const LEVELS = [
   {xp:0,    t:'Jeune Pousse',      em:'🌱'},
@@ -534,7 +562,7 @@ function freshState(){
   return { age:65, brainAge:null, startBrainAge:null, neurones:0, badges:[],
     streak:0, bestStreak:0, lastDay:null, sessions:0, totalExos:0,
     history:[], pillars:p, chestDay:null, recent:[], lastJoker:null,
-    goal:null, dayEffort:{d:null,pct:0}, week:{id:null,days:[],rewarded:false}, milestones:0, remind:false,
+    goal:null, dayEffort:{d:null,pct:0}, week:{id:null,days:[],rewarded:false}, milestones:0, remind:false, reads:[],
     derivedAsked:[], derivations:[],
     tinnitus:{has:false,origin:null,eva:[]} };
 }
@@ -775,6 +803,109 @@ function pushHistory(){
   save();
 }
 
+/* ═══════════════ BIBLIOTHÈQUE — contenu gratuit ═══════════════ */
+const LIB=[
+{id:'lancet',t:'Les 12 leviers qui changent tout',min:'3 min',ref:'Commission Lancet, 2020',pillar:null,body:`
+<p>En 2020, trente des meilleurs spécialistes mondiaux ont passé en revue des centaines d'études pour la revue médicale <i>The Lancet</i>. Leur conclusion a fait le tour du monde : <b>près de 40 % des démences pourraient être évitées ou retardées</b> en agissant sur douze facteurs de notre quotidien.</p>
+<p>Parmi eux : la perte auditive non corrigée (le facteur n°1 à la cinquantaine), l'hypertension, la sédentarité, l'isolement social, le tabac, le sommeil, la dépression ou encore le diabète.</p>
+<p>La leçon est immense : le déclin cognitif n'est pas une loterie. C'est en grande partie une <b>affaire d'habitudes</b> — et les habitudes, ça se travaille, à tout âge. L'étude finlandaise FINGER l'a confirmé : un programme combinant exercices cognitifs, activité physique et nutrition améliore les performances même après 60 ans.</p>
+<p>Mentavix est construit sur cette science : chaque pilier de votre tableau de bord correspond à l'un de ces leviers. Vous n'entraînez pas votre cerveau au hasard.</p>`},
+{id:'audition',t:'Vos oreilles protègent votre mémoire',min:'3 min',ref:'F. Lin, Johns Hopkins',pillar:'audition',body:`
+<p>C'est l'une des découvertes les plus importantes de la décennie : la perte auditive non corrigée est <b>le premier facteur de risque modifiable</b> de déclin cognitif à partir de 45 ans.</p>
+<p>Pourquoi ? D'abord par <b>surcharge</b> : quand l'oreille faiblit, le cerveau dépense une énergie folle à déchiffrer les sons — énergie qu'il ne consacre plus à mémoriser. Vous suivez la conversation, mais elle ne s'imprime pas.</p>
+<p>Ensuite par <b>privation</b> : moins stimulées, les zones auditives s'affaiblissent, et avec elles leurs voisines. Enfin par <b>isolement</b> : on s'éloigne des repas de famille, des amis — et le lien social est lui-même un pilier majeur.</p>
+<p>La bonne nouvelle ? L'étude ACHIEVE (2023) montre qu'un appareillage adapté peut réduire de moitié le déclin cognitif chez les personnes à risque. Un bilan auditif est gratuit et sans engagement : c'est probablement le geste le plus rentable pour votre cerveau.</p>`},
+{id:'mind',t:'MIND : l\'assiette qui défend le cerveau',min:'3 min',ref:'Morris et al., 2015',pillar:'nutrition',body:`
+<p>Le régime MIND est né d'une question simple : que mangent ceux qui vieillissent avec un cerveau en pleine forme ? La chercheuse Martha Clare Morris a suivi près d'un millier de personnes pendant des années. Résultat : chez les plus fidèles au régime MIND, le risque de maladie d'Alzheimer était réduit de <b>53 %</b>.</p>
+<p>Ses stars : les <b>légumes à feuilles vertes</b> (6 portions par semaine), les <b>baies</b> — myrtilles en tête —, les noix, les légumineuses, le poisson, l'huile d'olive et les céréales complètes.</p>
+<p>À limiter : viande rouge, beurre en excès, fromage quotidien, pâtisseries et fritures — sources d'inflammation, l'ennemie silencieuse des neurones.</p>
+<p>Le plus beau ? Même une adhésion <b>moyenne</b> réduisait déjà le risque de 35 %. Pas besoin d'être parfait : chaque repas est une occasion. L'exercice « Le tri MIND » de vos séances vous entraîne à faire ces choix par réflexe.</p>`},
+{id:'sommeil',t:'La nuit, votre cerveau fait le ménage',min:'3 min',ref:'Système glymphatique — Nedergaard',pillar:'vigilance',body:`
+<p>Pendant longtemps, on a cru que le cerveau se reposait la nuit. C'est tout l'inverse : il passe en <b>mode nettoyage</b>. En 2012, l'équipe de Maiken Nedergaard a découvert le système glymphatique : durant le sommeil profond, les cellules cérébrales se contractent et laissent circuler un liquide qui <b>évacue les déchets</b> accumulés dans la journée — dont les protéines impliquées dans la maladie d'Alzheimer.</p>
+<p>Un sommeil court ou haché, c'est un ménage bâclé. À la longue, les déchets s'accumulent. C'est pourquoi la somnolence en journée et les nuits difficiles pèsent directement sur votre pilier Vigilance.</p>
+<p>Les gestes qui aident : des horaires réguliers (même le week-end), une chambre fraîche et sombre, pas d'écran lumineux au lit, et l'alcool avec grande modération — il endort vite mais fragmente le sommeil profond.</p>
+<p>Votre exercice « Réflexe éclair » mesure justement cette vigilance : si vos temps s'allongent durablement, votre sommeil mérite peut-être une conversation avec un professionnel.</p>`},
+{id:'muscle',t:'Le muscle, meilleur ami du neurone',min:'3 min',ref:'SPPB — Guralnik · Lancet 2020',pillar:'corps',body:`
+<p>Après 50 ans, nous perdons naturellement 1 à 2 % de masse musculaire par an : c'est la <b>sarcopénie</b>. Longtemps vue comme un simple problème de force, elle est aujourd'hui reconnue comme une affaire de cerveau.</p>
+<p>Quand vous contractez un muscle, il libère des messagers chimiques — dont le fameux <b>BDNF</b>, un véritable engrais pour les neurones qui favorise la création de nouvelles connexions, notamment dans l'hippocampe, siège de la mémoire.</p>
+<p>L'équilibre est le baromètre : tenir sur un pied, se lever d'une chaise sans les mains, marcher d'un bon pas. Ces gestes simples — ceux de votre « Séance corps » — sont les mêmes que les médecins utilisent (test SPPB) pour prédire l'autonomie future.</p>
+<p>Il n'est jamais trop tard : des études montrent des gains de force de 30 % après quelques semaines d'exercices doux, à tout âge. Deux minutes par jour, près d'un appui solide, suffisent pour entretenir la machine.</p>`},
+{id:'reserve',t:'La réserve cognitive, votre épargne cérébrale',min:'3 min',ref:'Y. Stern, Columbia',pillar:null,body:`
+<p>Deux personnes peuvent avoir un cerveau physiquement identique et des destins cognitifs très différents. La clé ? La <b>réserve cognitive</b>, un concept du neuroscientifique Yaakov Stern : c'est la capacité du cerveau à <b>trouver des chemins de secours</b> quand une route se ferme.</p>
+<p>Cette réserve se construit toute la vie : études, métier, lectures, curiosité, voyages, conversations… Chaque apprentissage tisse de nouvelles connexions, comme une épargne qu'on accumule.</p>
+<p>Et la retraite n'est pas la fin des versements : apprendre — une recette, un morceau de musique, un exercice inédit — continue d'alimenter le compte. C'est la <b>nouveauté</b> qui compte : ce qui vous demande un effort inhabituel.</p>
+<p>C'est pourquoi vos séances Mentavix varient sans cesse les exercices : un cerveau surpris est un cerveau qui épargne. Votre âge cérébral estimé reflète cette dynamique — et chaque séance y contribue.</p>`},
+{id:'acoutrt',t:'Acouphènes : apprendre à ne plus entendre',min:'3 min',ref:'TRT — Jastreboff',pillar:null,body:`
+<p>Un acouphène, c'est un son fabriqué par le système auditif lui-même. Le problème n'est pas tant le son que <b>l'importance que le cerveau lui accorde</b> : classé « danger », il est surveillé en permanence — et donc amplifié.</p>
+<p>La thérapie d'habituation (TRT, du Dr Jastreboff) renverse la logique : au lieu de lutter, on apprend au cerveau à <b>classer le son sans suite</b>, comme le tic-tac d'une horloge qu'on finit par ne plus entendre.</p>
+<p>Ses outils : comprendre le mécanisme (c'est déjà la moitié du chemin), éviter le silence complet — un fond sonore doux aide le cerveau à relativiser —, et réduire la charge émotionnelle, car stress et fatigue amplifient la perception.</p>
+<p>Dans certains cas, l'acouphène est lié aux cervicales ou à la mâchoire : bouger la nuque le module. Ce cas particulier mérite un regard d'ostéopathe. Dans les autres, un bilan auditif complet est le point de départ. Votre Espace acouphènes vous accompagne jour après jour.</p>`},
+{id:'variete',t:'Pourquoi les mots croisés ne suffisent pas',min:'2 min',ref:'Étude FINGER, 2015',pillar:null,body:`
+<p>Les mots croisés, c'est bien. Mais faits tous les jours depuis vingt ans, ils ne surprennent plus votre cerveau : vous mobilisez des circuits déjà tracés, comme un chemin de campagne mille fois parcouru.</p>
+<p>Ce qui fait grandir la réserve cognitive, c'est la <b>nouveauté</b> et la <b>variété</b> : alterner mémoire, vitesse, attention, calcul, équilibre… L'étude finlandaise FINGER — la référence mondiale — n'a pas testé une activité unique, mais un <b>cocktail</b> : exercices cognitifs variés + activité physique + nutrition + suivi. C'est ce cocktail qui a amélioré les performances.</p>
+<p>C'est le principe de vos séances : sept piliers, seize types d'exercices, jamais deux séances identiques. Si un exercice vous semble inconfortable parce qu'inhabituel — c'est précisément lui qui vous fait progresser.</p>`},
+{id:'stress',t:'Le stress, rouille silencieuse',min:'3 min',ref:'Cortisol & hippocampe',pillar:null,body:`
+<p>Le stress aigu est un allié : il aiguise l'attention. C'est le stress <b>chronique</b> qui pose problème : son hormone, le cortisol, baigne le cerveau en continu — et l'hippocampe, centre de la mémoire, y est particulièrement sensible.</p>
+<p>Sous cortisol prolongé, on observe moins de nouvelles connexions, une mémoire immédiate qui flanche, un sommeil abîmé. Beaucoup de « trous de mémoire » après 60 ans sont d'abord des <b>trous d'attention</b> liés à la tension ou aux ruminations.</p>
+<p>L'antidote le plus simple s'appelle la <b>cohérence cardiaque</b> : 5 minutes, 6 respirations lentes par minute (inspirez 5 secondes, expirez 5 secondes). Pratiquée matin et soir, elle fait mesurablement baisser le cortisol.</p>
+<p>Ajoutez-y la marche, le lien social et vos séances quotidiennes : un cerveau détendu apprend deux fois mieux.</p>`},
+{id:'glycemie',t:'Le sucre, le cerveau et les montagnes russes',min:'3 min',ref:'Crane et al., NEJM 2013 · Régime MIND',pillar:'nutrition',body:`
+<p>Votre cerveau ne pèse que 2 % de votre poids, mais il consomme à lui seul près de <b>20 % du glucose</b> de votre corps. Autant dire qu'il est le premier concerné par ce qui se passe dans votre assiette — et le premier à souffrir des variations brutales.</p>
+<p>À court terme, chacun connaît la sensation : un petit-déjeuner très sucré, un coup de fouet, puis vers 11 heures la fatigue, le <b>brouillard mental</b> et l'envie irrésistible de grignoter. C'est la chute qui suit le pic. Ce n'est pas un manque de volonté : c'est de la physiologie.</p>
+<p>À long terme, l'enjeu est plus sérieux. Une étude de référence publiée dans le <i>New England Journal of Medicine</i> (Crane et coll., 2013) a suivi plus de 2 000 personnes âgées : celles dont la glycémie moyenne était la plus élevée présentaient un <b>risque de démence accru</b> — y compris chez les personnes non diabétiques. Certains chercheurs parlent même de « diabète de type 3 » pour la maladie d'Alzheimer, une expression parlante même si elle reste débattue. Attention toutefois : il s'agit d'une association statistique, pas d'une cause unique démontrée.</p>
+<p>La bonne nouvelle, c'est que les leviers sont simples et sans privation. <b>Commencez le repas par les légumes</b>, gardez les féculents et le dessert pour la fin, préférez un petit-déjeuner salé et protéiné, mangez le fruit entier plutôt que le jus (les fibres changent tout), et surtout <b>marchez dix minutes après le repas</b> : vos muscles absorbent alors le glucose sans effort. Inutile de traquer chaque courbe — un pic après un repas est normal. C'est la régularité de ces gestes qui compte.</p>`},
+{id:'social',t:'Le lien social, vitamine invisible',min:'2 min',ref:'Commission Lancet, 2020',pillar:'audition',body:`
+<p>Une conversation animée est l'un des exercices cérébraux les plus complets qui soient : écouter dans le bruit, suivre les idées, chercher ses mots, lire les visages, réagir avec humour… Un entraînement complet, sans y penser.</p>
+<p>C'est pourquoi l'isolement social figure parmi les douze facteurs majeurs de la Commission Lancet. Moins d'échanges, c'est moins de stimulation — et souvent moins de moral, autre ennemi du cerveau.</p>
+<p>L'audition joue ici un rôle charnière : quand suivre les conversations devient fatigant, on décline les invitations sans même s'en rendre compte. Corriger son audition, c'est souvent retrouver sa vie sociale — et offrir à son cerveau sa vitamine préférée.</p>
+<p>Un appel à un ami, un repas de famille, une association : chacun compte autant qu'une séance d'exercices.</p>`}
+];
+const FACTS=[
+{txt:'Près de 40 % des démences pourraient être évitées en agissant sur 12 facteurs du quotidien.',art:'lancet'},
+{txt:'La perte auditive non corrigée est le 1er facteur de risque modifiable de déclin cognitif après 45 ans.',art:'audition'},
+{txt:'Le régime MIND est associé à une réduction de 53 % du risque d\'Alzheimer chez ses adeptes les plus fidèles.',art:'mind'},
+{txt:'Pendant le sommeil profond, votre cerveau évacue les déchets accumulés dans la journée.',art:'sommeil'},
+{txt:'Contracter un muscle libère du BDNF, un véritable engrais pour vos neurones.',art:'muscle'},
+{txt:'Apprendre quelque chose de nouveau, à tout âge, alimente votre « épargne cérébrale ».',art:'reserve'},
+{txt:'Un acouphène s\'apprivoise : le cerveau peut apprendre à le classer sans suite, comme un tic-tac d\'horloge.',art:'acoutrt'},
+{txt:'Ce n\'est pas la répétition qui muscle le cerveau, c\'est la nouveauté.',art:'variete'},
+{txt:'5 minutes de respiration lente (5 s inspiration, 5 s expiration) font mesurablement baisser le cortisol.',art:'stress'},
+{txt:'Une conversation animée est l\'un des exercices cérébraux les plus complets qui soient.',art:'social'},
+{txt:'Tenir 10 secondes sur un pied est l\'un des tests d\'autonomie future les plus fiables (SPPB).',art:'muscle'},
+{txt:'Un appareillage auditif adapté peut réduire de moitié le déclin cognitif des personnes à risque (ACHIEVE, 2023).',art:'audition'},
+{txt:'Les myrtilles et les légumes à feuilles vertes sont les stars de l\'assiette du cerveau.',art:'mind'},
+{txt:'L\'isolement social pèse autant sur le cerveau que plusieurs facteurs médicaux classiques.',art:'social'},
+{txt:'Votre cerveau ne pèse que 2 % de votre poids, mais consomme 20 % de votre glucose.',art:'glycemie'},
+{txt:'Marcher dix minutes après le repas suffit à faire absorber le glucose par vos muscles.',art:'glycemie'},
+{txt:'Le coup de fatigue de 11 heures n\'est pas un manque de volonté : c\'est la chute qui suit le pic de glycémie.',art:'glycemie'}
+];
+function factOfDay(){ const d=new Date(); return FACTS[(d.getDate()+d.getMonth())%FACTS.length]; }
+function libRead(id){ return (D.reads||[]).includes(id); }
+function openLibrary(){
+  $('libCount').textContent=(D.reads||[]).length+' / '+LIB.length+' dossiers lus';
+  $('libList').innerHTML=LIB.map(a=>
+    '<button class="librow" onclick="openArticle(\''+a.id+'\')"><span>'+a.t+
+    '<small>'+a.min+' de lecture · '+a.ref+'</small></span><span class="st">'+(libRead(a.id)?'✓':'›')+'</span></button>').join('');
+  go('s-library');
+}
+function openArticle(id){
+  const a=LIB.find(x=>x.id===id); if(!a) return;
+  $('artTitle').textContent=a.t;
+  $('artSci').textContent='🔬 '+a.ref;
+  $('artBody').innerHTML=a.body;
+  $('artMark').style.display=libRead(id)?'none':'block';
+  $('artMark').onclick=()=>{
+    if(!libRead(id)){ D.reads=D.reads||[]; D.reads.push(id); D.neurones+=10; gainFx('+10'); }
+    if(D.reads.length>=5) grantBadge('curieux');
+    if(D.reads.length>=LIB.length) grantBadge('savant');
+    save(); checkLevelUp(); openLibrary();
+  };
+  $('artTrain').style.display=a.pillar?'block':'none';
+  if(a.pillar) $('artTrain').onclick=()=>startFeed(a.pillar);
+  go('s-article');
+  const sc=document.getElementById('s-article'); if(sc) sc.scrollTop=0;
+}
+
 /* ═══════════════════ JARDIN COGNITIF ═══════════════════ */
 function wiltDays(k){
   const last=D.pillars[k].last;
@@ -846,7 +977,14 @@ function showGarden(){
     : '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Un rappel en douceur</p>'+
       '<p class="sub" style="font-size:14px;margin-bottom:12px">Recevez chaque jour une invitation discrète à votre séance.</p>'+
       '<button class="btn ghost" onclick="enableReminders()">Activer les rappels</button></div>';
-  $('gExtras').innerHTML=goalCard+pwaCard+remindCard+deriveCardHTML()+
+  const fact=factOfDay();
+  const sciCard='<div class="card" style="padding:18px;border-color:var(--soleil)"><p class="sub" style="font-weight:700;margin-bottom:4px">La minute science</p>'+
+    '<p class="sub" style="font-size:15px;margin-bottom:12px">'+fact.txt+'</p>'+
+    '<button class="btn ghost" onclick="openArticle(\''+fact.art+'\')">En savoir plus</button></div>';
+  const libCard='<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Comprendre votre cerveau</p>'+
+    '<p class="sub" style="font-size:14px;margin-bottom:12px">'+(D.reads||[]).length+'/'+LIB.length+' dossiers lus · chaque lecture rapporte 10 neurones.</p>'+
+    '<button class="btn ghost" onclick="openLibrary()">Ouvrir la bibliothèque</button></div>';
+  $('gExtras').innerHTML=sciCard+goalCard+libCard+pwaCard+remindCard+deriveCardHTML()+
     '<div class="card" style="padding:18px"><p class="sub" style="font-weight:700;margin-bottom:4px">Anti-sarcopénie</p>'+
     '<p class="sub" style="font-size:14px;margin-bottom:12px">Le muscle protège le cerveau (Commission Lancet 2020). 4 exercices doux et guidés, 3 minutes.</p>'+
     '<button class="btn green" onclick="startFeed(\'corps\')">Séance corps guidée 🤸</button></div>'+
